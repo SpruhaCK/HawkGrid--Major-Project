@@ -1,0 +1,5 @@
+#This file contains the dependencies for the simulation script ONLY.
+
+#Install with: pip install -r requirements-sim.txt
+
+requests

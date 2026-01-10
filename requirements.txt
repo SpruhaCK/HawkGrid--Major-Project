@@ -13,3 +13,4 @@ python-dotenv
 elasticsearch # For connecting to Elasticsearch later
 azure-identity
 azure-mgmt-network
+boto3 # The AWS SDK for Python

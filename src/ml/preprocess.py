@@ -77,60 +77,65 @@ def build_preprocessing_tools(x_train_path: str = X_TRAIN_PATH, y_train_path: st
     return {"scaler": SCALER_PATH, "label_encoder": ENCODER_PATH, "features": FEATURES_PATH}
 
 
-def preprocess_security_logs(raw_df: pd.DataFrame, expected_features: Union[List[str], int, Dict[str, Any]]):
+def preprocess_security_logs(raw_df: pd.DataFrame, expected_features: List[str]) -> pd.DataFrame:
     """
     Aligns incoming live logs (raw_df) to the expected features used during training.
-    - expected_features: either a list of column names (preferred), OR an integer number of features.
-    - Returns a DataFrame containing only numeric columns in the same order as expected_features.
-    - Missing features are added with zeros; extra columns in raw_df are ignored.
-
-    This function never mutates raw_df in-place.
+    
+    This function handles the critical mismatch between simulation feature names
+    (e.g., 'Network_Egress_MB') and the model's trained feature names (e.g., 'f_0' or 'dbytes').
+    
+    It assumes the *order* of the numeric features in the simulation
+    matches the *order* of the features the model was trained on.
     """
     df = raw_df.copy(deep=True)
-    # Convert column names to string to avoid dtype mismatch
-    df.columns = [str(c) for c in df.columns]
+    
+    # --- BEGIN FIX ---
+    
+    # 1. Get the list of feature names the *model* expects (e.g., ['f_0', 'f_1', 'f_2', ...])
+    model_feature_names = [str(f) for f in expected_features]
+    
+    # 2. Get the list of *numeric* feature names from the *simulation*
+    #    (e.g., ['Network_Egress_MB', 'API_Call_Freq', 'Failed_Auth_Count'])
+    sim_numeric_features = df.select_dtypes(include=[np.number]).columns.tolist()
 
-    # If expected_features is a dict (metadata), try to extract list or number
-    if isinstance(expected_features, dict):
-        if "num_features" in expected_features:
-            expected = int(expected_features["num_features"])
-        elif "features" in expected_features:
-            expected = list(expected_features["features"])
+    # 3. Create the mapping for *only* the features we can map
+    #    This is the core of the fix. We map the first N sim features
+    #    to the first N model features.
+    
+    num_to_map = min(len(sim_numeric_features), len(model_feature_names))
+    if num_to_map == 0:
+        log.warning("No numeric features found in simulation data.")
+        # Proceed, which will create a zero vector later
+    
+    sim_features_to_map = sim_numeric_features[:num_to_map]
+    model_features_to_map = model_feature_names[:num_to_map]
+    
+    # 4. Create the rename map
+    #    (e.g., {'Network_Egress_MB': 'f_0', 'API_Call_Freq': 'f_1', 'Failed_Auth_Count': 'f_2'})
+    try:
+        rename_map = dict(zip(sim_features_to_map, model_features_to_map))
+        df.rename(columns=rename_map, inplace=True)
+        log.debug(f"Successfully mapped sim features to model features: {rename_map}")
+    except Exception as e:
+        log.exception(f"Failed to create feature rename map: {e}")
+        # Fallback to an empty df, which will be zero-padded
+        df = pd.DataFrame()
+
+    # --- END FIX ---
+
+    # 5. Now, use the original alignment logic.
+    #    This creates the full-width DataFrame the model expects.
+    aligned = pd.DataFrame(columns=model_feature_names, index=df.index)
+    
+    for col in model_feature_names:
+        if col in df.columns:
+            # Copy the *real data* from the sim (now renamed)
+            aligned[col] = df[col]
         else:
-            raise ValueError("Unsupported features metadata dict. Provide 'features' (list) or 'num_features' (int).")
-    else:
-        expected = expected_features
+            # Pad all *other* features (e.g., f_3 to f_40) with 0.0
+            aligned[col] = 0.0
 
-    # Case A: expected is a list of column names
-    if isinstance(expected, list):
-        target_cols = [str(c) for c in expected]
-
-        # For columns missing in incoming data, add zeros
-        for c in target_cols:
-            if c not in df.columns:
-                df[c] = 0.0
-
-        # Keep only target columns in the exact order
-        aligned = df[target_cols].copy()
-
-    # Case B: expected is an integer (number of features)
-    elif isinstance(expected, int):
-        n = expected
-        # If incoming df has fewer numeric columns, pad with zeros
-        numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-        if len(numeric_cols) >= n:
-            aligned = df[numeric_cols[:n]].copy()
-        else:
-            # take all numeric columns and pad additional columns with zeros
-            aligned = df[numeric_cols].copy()
-            for i in range(n - len(numeric_cols)):
-                aligned[f"pad_{i}"] = 0.0
-            # reorder to a deterministic order
-            aligned = aligned[[*numeric_cols, *[f"pad_{i}" for i in range(n - len(numeric_cols))]]]
-    else:
-        raise ValueError("expected_features must be a list or int or dict containing them.")
-
-    # Ensure numeric dtype and fill NaNs
+    # 6. Ensure numeric dtype and fill NaNs
     for col in aligned.columns:
         aligned[col] = pd.to_numeric(aligned[col], errors="coerce").fillna(0.0)
 
@@ -145,5 +150,5 @@ if __name__ == "__main__":
         build_preprocessing_tools()
         log.info("Preprocessing artifacts created successfully.")
     except Exception as e:
-        log.exception("Failed to create preprocessing tools: %s", e)
+        log.exception("Failed to create preprocessing tools: {s}", e)
         raise

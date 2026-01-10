@@ -22,8 +22,29 @@ import numpy as np
 
 # local imports (your repo)
 from src.ml.preprocess import preprocess_security_logs
-# ledger function - keep your existing ledger function signature
-from src.blockchain.ledger import log_incident_to_ledger
+from src.orchestrator.playbook import execute_playbook # <-- IMPORT PLAYBOOK
+
+# --- NEW: CONDITIONAL LEDGER IMPORT ---
+# Check the environment variable to decide which ledger to use.
+# This allows local dev (using .jsonl) or prod (using QLDB)
+USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "false").lower() == "true"
+
+if USE_LOCAL_LEDGER:
+    logging.warning("USE_LOCAL_LEDGER=true. Using local .jsonl file for forensic ledger.")
+    # Import the local file ledger
+    from src.blockchain.ledger import log_incident_to_ledger
+else:
+    logging.info("USE_LOCAL_LEDGER=false. Using AWS QLDB for forensic ledger.")
+    try:
+        # Import the AWS QLDB ledger
+        from src.blockchain.ledger_aws import log_incident_to_ledger
+    except ImportError:
+        logging.error("Failed to import ledger_aws.py. Is boto3 installed?")
+        # Fallback to local if AWS one fails to import
+        from src.blockchain.ledger import log_incident_to_ledger
+        USE_LOCAL_LEDGER = True # Force local mode
+# --- END NEW BLOCK ---
+
 
 # Optional Elastic import: handle if not installed in dev env
 try:
@@ -123,7 +144,7 @@ def detect_anomaly(payload: LogFeatures):
         raise HTTPException(status_code=500, detail="Scaling error")
 
     # Stage 1: IsolationForest
-    iso_pred = model_iso.predict(X_scaled)[0]           # -1 anomaly, 1 normal
+    iso_pred = model_iso.predict(X_scaled)[0]         # -1 anomaly, 1 normal
     iso_score = float(model_iso.decision_function(X_scaled)[0])
     is_anomaly = (iso_pred == -1)
 
@@ -134,14 +155,14 @@ def detect_anomaly(payload: LogFeatures):
             attack_label = label_encoder.inverse_transform([rf_pred_enc])[0]
         except Exception:
             # fallback: if label encoder doesn't map properly
-            attack_label = str(rf_pred_enc)
+            attack_label = f"Unknown (Class {rf_pred_enc})" # <-- FIX
     else:
         # Try to return human 'Normal' if present
         try:
             if "Normal" in label_encoder.classes_:
                 attack_label = "Normal"
             else:
-                attack_label = label_encoder.inverse_transform([0])[0]
+                attack_label = label_encoder.inverse_transform([0])[0] # <-- FIX (Typo)
         except Exception:
             attack_label = "Normal"
 
@@ -171,12 +192,31 @@ def detect_anomaly(payload: LogFeatures):
         # If the attack is not "Normal", write to forensic ledger and attach its result to response
         if response["attack_type_classified"] != "Normal":
             try:
-                ledger_res = log_incident_to_ledger(log_entry, action="AUTOMATED_CONTAINMENT")
+                # --- THIS IS THE FIX ---
+                # Changed 'action' to 'response_action' to match ledger.py
+                ledger_res = log_incident_to_ledger(log_entry, response_action="AUTOMATED_CONTAINMENT")
+                # --- END OF FIX ---
+                
                 response["forensic_ledger"] = ledger_res
-                log.critical("Forensic ledger entry created: %s", str(ledger_res.get("current_hash", "")[:12]))
-            except Exception:
+                if not USE_LOCAL_LEDGER:
+                     log.critical("Forensic ledger entry created (AWS QLDB)")
+                else:
+                     # This log now comes from ledger.py, so we just check for the hash
+                     log.info(f"Forensic ledger entry created (Local File): {str(ledger_res.get('current_hash', 'ERROR')[:12])}")
+            
+            except Exception as e:
                 log.exception("Failed to write to forensic ledger; continuing without ledger result.")
-                response["forensic_ledger"] = {"error": "ledger_write_failed"}
+                response["forensic_ledger"] = {"error": f"ledger_write_failed: {e}"}
+
+            # --- EXECUTE THE PLAYBOOK ---
+            try:
+                playbook_res = execute_playbook("AUTOMATED_CONTAINMENT", log_entry)
+                response["incident_response"] = playbook_res
+                log.info(f"Playbook execution finished: {playbook_res.get('status')}")
+            except Exception:
+                log.exception("Failed to execute incident response playbook.")
+                response["incident_response"] = {"error": "playbook_execution_failed"}
+            # --- END OF PLAYBOOK BLOCK ---
 
     return response
 
@@ -199,4 +239,3 @@ def health_es():
         log.exception("Elasticsearch health check failed: %s", e)
         raise HTTPException(status_code=500, detail=str(e))
     return {"status": "error", "detail": "Elasticsearch health check failed."}
-    

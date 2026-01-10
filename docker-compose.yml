@@ -16,6 +16,14 @@ services:
     environment:
       # Pass the Elasticsearch URL to the orchestrator Python app
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      
+      # --- ADDED FOR LOCAL DEVELOPMENT ---
+      # Forces playbook.py to use simulation mode
+      USE_SIMULATION: "true" 
+      # Forces api.py to use the local .jsonl ledger
+      USE_LOCAL_LEDGER: "true"
+      # --- END OF ADDITION ---
+      
     # Set the working directory to the root of the application code
     working_dir: /app
 

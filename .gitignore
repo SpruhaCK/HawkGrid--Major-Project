@@ -6,6 +6,18 @@
 # Ignore Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+
+# Docker
+docker-compose.override.yml
 
 # Ignore large model or dataset files
 *.h5
@@ -13,7 +25,19 @@ __pycache__/
 *.joblib
 *.csv
 *.zip
+*.pt
+*.ckpt
 
 # Ignore system files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+
+# Archives / Large Files
+*.tar
+*.tar.gz
+
+# Logs & Runtime Files
+# logs/
+# *.log
