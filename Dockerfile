@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all project files into the container
 COPY . /app
 
-Expose 8000
+EXPOSE 8000
 
 # Set the entrypoint command to run Uvicorn (FastAPI server)
 # The command starts the server, looking for the app object in the src.orchestrator.api module

@@ -3,7 +3,8 @@ import json
 import logging
 import time
 from pyqldb.driver.qldb_driver import QldbDriver
-from pyqldb.errors import QldbDriverException
+# CORRECTED: Use valid pyqldb error classes
+from pyqldb.errors import ExecuteError, DriverClosedError, SessionPoolEmptyError
 
 # --- Configuration ---
 LEDGER_NAME = "hawkgrid-forensic-ledger"
@@ -11,22 +12,22 @@ TABLE_NAME = "incidents"
 log = logging.getLogger("hawkgrid-ledger-aws")
 log.setLevel(logging.INFO)
 
-# Global QLDB Driver
-# We reuse the driver for efficiency
+# Global QLDB Driver instance for session reuse
 qldb_driver = None
 
-# --- NEW FUNCTION ---
 def _create_table_if_not_exists(driver: QldbDriver, table_name: str):
-    """Checks if a table exists and creates it if it doesn't."""
+    """
+    Ensures the forensic table exists in QLDB. 
+    This is critical for 'Zero-Touch' deployment.
+    """
     log.info(f"Checking if table '{table_name}' exists...")
     try:
         table_names = list(driver.list_tables())
         if table_name in table_names:
-            log.info(f"Table '{table_name}' already exists. No action needed.")
+            log.info(f"Table '{table_name}' already exists.")
             return
         
-        # Table does not exist, create it
-        log.warning(f"Table '{table_name}' not found. Creating it now...")
+        log.warning(f"Table '{table_name}' not found. Creating table...")
         
         def create_table_txn(transaction_executor):
             transaction_executor.execute_statement(f"CREATE TABLE {table_name}")
@@ -34,45 +35,42 @@ def _create_table_if_not_exists(driver: QldbDriver, table_name: str):
         driver.execute_lambda(create_table_txn)
         log.info(f"Successfully created table '{table_name}'.")
 
+    except ExecuteError as e:
+        log.error(f"PartiQL error during table creation: {e}")
+        raise
     except Exception as e:
-        log.exception(f"Error checking or creating table '{table_name}': {e}")
+        log.exception(f"Unexpected error creating table '{table_name}': {e}")
         raise
 
 def get_qldb_driver():
-    """Initializes and retrieves the QLDB driver."""
+    """Initializes the QLDB driver with the correct ledger name."""
     global qldb_driver
     if qldb_driver is None:
-        log.info(f"Initializing QLDB Driver for ledger: {LEDGER_NAME}...")
+        log.info(f"Initializing QLDB Driver for ledger: {LEDGER_NAME}")
         try:
-            # The driver automatically handles AWS credentials
+            # The driver uses your 'aws configure' credentials automatically
             qldb_driver = QldbDriver(ledger_name=LEDGER_NAME)
             
-            # --- ADDED CALL ---
-            # Ensure the "incidents" table exists before returning the driver
+            # Verify table existence before processing any traffic
             _create_table_if_not_exists(qldb_driver, TABLE_NAME)
             
-            log.info("QLDB Driver initialized and table verified.")
-        except Exception:
-            log.exception("Failed to initialize QLDB Driver!")
+        except Exception as e:
+            log.exception(f"Failed to initialize QLDB Driver: {e}")
             raise
     return qldb_driver
 
 def log_incident_to_ledger(incident_data: dict, response_action: str) -> dict:
     """
-    1. Connects to the AWS QLDB Ledger.
-    2. Inserts the incident data as a document.
-    3. QLDB automatically handles all hashing and chaining.
+    Writes a cryptographic record of the anomaly to the ledger.
+    This fulfills the 'Forensic Integrity' objective.
     """
-    # --- MODIFIED --- 
-    # Wrapped in try/except to handle driver init failure
     try:
         driver = get_qldb_driver()
     except Exception as e:
-        log.exception(f"Failed to get QLDB driver. Aborting log to ledger. Error: {e}")
-        raise # Re-raise the exception so api.py can catch it
+        log.error(f"Ledger initialization failed. Data will not be immutable: {e}")
+        raise 
     
-    # 1. Prepare the Data Block
-    # QLDB accepts Python dicts directly
+    # 1. Standardize the Forensic Block
     incident_details = {
         "incident_time": incident_data.get("timestamp", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())),
         "node_id": incident_data.get("node_id"),
@@ -80,35 +78,34 @@ def log_incident_to_ledger(incident_data: dict, response_action: str) -> dict:
         "anomaly_score": incident_data.get("anomaly_score"),
         "attack_type": incident_data.get("attack_type", "UNCATEGORIZED_ANOMALY"), 
         "response_action": response_action,
-        "raw_event": incident_data.get("raw_event_sample", {})
+        "raw_event": incident_data.get("raw_event_sample", {}),
+        "hawkgrid_version": "1.0-stable"
     }
 
-    log.info(f"Attempting to write to QLDB ledger: {LEDGER_NAME}")
-
     try:
-        # 2. Define the write function
+        # 2. Define the write function using PartiQL
         def execute_insert(transaction_executor):
-            log.info(f"Inserting document into table: {TABLE_NAME}...")
-            # This is PartiQL, QLDB's query language. It's like SQL for JSON.
             statement = f"INSERT INTO {TABLE_NAME} ?"
-            # The driver handles serializing the Python dict
             transaction_executor.execute_statement(statement, incident_details)
 
-        # 3. Execute the transaction
-        # execute_lambda handles retries and session management
+        # 3. Execute the lambda (handles retries and session management)
         driver.execute_lambda(execute_insert)
         
-        log.critical(f"Successfully wrote incident to QLDB ledger: {incident_details['node_id']}")
+        log.critical(f"IMMUTABLE LOG CREATED: Node {incident_details['node_id']} flagged.")
         
-        # We don't get a hash back immediately, so we return the logged data
-        # The true "hash" is the document ID, which you can query later
         return {
-            "status": "logged_to_qldb",
-            "ledger": LEDGER_NAME,
-            "table": TABLE_NAME,
-            "incident_data": incident_details
+            "status": "success",
+            "ledger_type": "AWS_QLDB",
+            "record": incident_details,
+            "verification": "Cryptographic signature pending journal seal"
         }
 
+    except ExecuteError as e:
+        log.error(f"Ledger write failed (Check QLDB permissions/IAM): {e}")
+        raise
+    except (DriverClosedError, SessionPoolEmptyError) as e:
+        log.error(f"Ledger session error: {e}")
+        raise
     except Exception as e:
-        log.exception(f"Failed to write to QLDB ledger: {e}")
-        raise # Re-raise the exception so api.py can catch it
+        log.exception(f"General failure in ledger component: {e}")
+        raise

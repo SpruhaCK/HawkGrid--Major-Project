@@ -1,241 +1,238 @@
 """
 api.py
 
-FastAPI service that loads the hawkgrid pipeline and exposes endpoints:
-- GET /status
-- POST /api/detect  (accepts arbitrary features as JSON)
-- GET /health/es
-
-It writes anomaly events to logs/anomalies.jsonl and calls src.blockchain.ledger.log_incident_to_ledger
-when anomalies are detected and need forensic logging.
+HawkGrid Detection Core
+- Real-time anomaly detection
+- AWS CloudTrail ingestion
+- Automated incident response
 """
+
+import sys
 import os
 import time
 import json
-import joblib
 import logging
 from typing import Optional
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from contextlib import asynccontextmanager
+
+# --- PATH SETUP ---
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+# --- THIRD PARTY ---
+import joblib
+import boto3
 import pandas as pd
-import numpy as np
+from fastapi import FastAPI, HTTPException, Request
+from pydantic import BaseModel, Field, ConfigDict
 
-# local imports (your repo)
+# --- LOCAL IMPORTS ---
 from src.ml.preprocess import preprocess_security_logs
-from src.orchestrator.playbook import execute_playbook # <-- IMPORT PLAYBOOK
+from src.orchestrator.playbook import execute_playbook
 
-# --- NEW: CONDITIONAL LEDGER IMPORT ---
-# Check the environment variable to decide which ledger to use.
-# This allows local dev (using .jsonl) or prod (using QLDB)
+# --- LEDGER SELECTION ---
 USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "false").lower() == "true"
 
 if USE_LOCAL_LEDGER:
-    logging.warning("USE_LOCAL_LEDGER=true. Using local .jsonl file for forensic ledger.")
-    # Import the local file ledger
     from src.blockchain.ledger import log_incident_to_ledger
 else:
-    logging.info("USE_LOCAL_LEDGER=false. Using AWS QLDB for forensic ledger.")
     try:
-        # Import the AWS QLDB ledger
         from src.blockchain.ledger_aws import log_incident_to_ledger
     except ImportError:
-        logging.error("Failed to import ledger_aws.py. Is boto3 installed?")
-        # Fallback to local if AWS one fails to import
         from src.blockchain.ledger import log_incident_to_ledger
-        USE_LOCAL_LEDGER = True # Force local mode
-# --- END NEW BLOCK ---
+        USE_LOCAL_LEDGER = True
 
-
-# Optional Elastic import: handle if not installed in dev env
+# --- OPTIONAL ELASTIC ---
 try:
     from elasticsearch import Elasticsearch
 except Exception:
     Elasticsearch = None
 
-# CONFIG
+# --- CONFIG ---
 MODEL_PATH = os.getenv("HG_MODEL_PATH", "src/ml/hawkgrid_pipeline.joblib")
 LOG_DIR = os.getenv("HG_LOG_DIR", "logs")
 ANOMALY_LOG_PATH = os.path.join(LOG_DIR, "anomalies.jsonl")
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 ES_HOST = os.getenv("ELASTICSEARCH_HOSTS", "http://elasticsearch-1:9200")
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=os.getenv("LOG_LEVEL", "INFO"),
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 log = logging.getLogger("hawkgrid-api")
 
-# FastAPI app
-app = FastAPI(title="HawkGrid Detection Core", version="1.0")
+# --- AWS CLIENTS ---
+cloudtrail = boto3.client("cloudtrail", region_name=AWS_REGION)
 
-# Global model handles
-scaler = None
-label_encoder = None
-model_iso = None
-model_rf = None
-model_features = None
+# =========================
+# FASTAPI LIFESPAN
+# =========================
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        log.info("Loading ML pipeline: %s", MODEL_PATH)
+        data = joblib.load(MODEL_PATH)
 
-# Pydantic model (flexible)
+        app.state.scaler = data["scaler"]
+        app.state.label_encoder = data["label_encoder"]
+        app.state.model_iso = data["model_iso"]
+        app.state.model_rf = data["model_rf"]
+        app.state.features = data["features"]
+
+        log.info("ML models loaded successfully.")
+    except Exception as e:
+        log.error("Startup failed: %s", e)
+
+    yield
+    log.info("HawkGrid Core shutting down.")
+
+app = FastAPI(
+    title="HawkGrid Detection Core",
+    version="1.0",
+    lifespan=lifespan
+)
+
+# =========================
+# DATA MODELS
+# =========================
 class LogFeatures(BaseModel):
-    # accept arbitrary fields (extra allowed)
+    model_config = ConfigDict(extra="allow")
+
     node_id: Optional[str] = Field(default="unknown-node")
     cloud_provider: Optional[str] = Field(default="unknown-cloud")
-    timestamp: Optional[str] = Field(default_factory=lambda: time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
+    timestamp: Optional[str] = Field(
+        default_factory=lambda: time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+    )
 
-    class Config:
-        extra = "allow"
+# =========================
+# HELPERS
+# =========================
+def append_anomaly_log(entry: dict):
+    with open(ANOMALY_LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, default=str) + "\n")
 
+def normalize_aws_event(event: dict) -> dict:
+    return {
+        "node_id": event.get("Username", "aws-user"),
+        "cloud_provider": "aws",
+        "API_Call_Freq": 1,
+        "Failed_Auth_Count": 1 if event.get("ErrorCode") else 0,
+        "Network_Egress_MB": 0.0,
+        "timestamp": event.get("EventTime")
+    }
 
-@app.on_event("startup")
-def startup_load_models():
-    global scaler, label_encoder, model_iso, model_rf, model_features
-    try:
-        models = joblib.load(MODEL_PATH)
-        scaler = models["scaler"]
-        label_encoder = models["label_encoder"]
-        model_iso = models["model_iso"]
-        model_rf = models["model_rf"]
-        model_features = models["features"]
-        log.info("Loaded ML pipeline from %s", MODEL_PATH)
-    except FileNotFoundError:
-        log.error("Model file not found at %s. Run training first.", MODEL_PATH)
-    except Exception as e:
-        log.exception("Failed to load model pipeline: %s", e)
-
-
+# =========================
+# ROUTES
+# =========================
 @app.get("/status")
-def status():
-    ready = all([scaler, label_encoder, model_iso, model_rf])
+def status(request: Request):
+    state = request.app.state
+    ready = all([
+        hasattr(state, "scaler"),
+        hasattr(state, "model_iso"),
+        hasattr(state, "model_rf")
+    ])
     return {
         "service": "HawkGrid Detection Core",
         "online": True,
         "models_loaded": ready,
-        "feature_count": len(model_features) if model_features else 0
+        "feature_count": len(state.features) if ready else 0
     }
-
-
-def append_anomaly_log(entry: dict):
-    """Append one JSON line to anomalies.jsonl (safe append)."""
-    try:
-        with open(ANOMALY_LOG_PATH, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(entry, default=str) + "\n")
-    except Exception:
-        log.exception("Failed to write anomaly log.")
-
 
 @app.post("/api/detect")
-def detect_anomaly(payload: LogFeatures):
-    if not all([scaler, label_encoder, model_iso, model_rf, model_features]):
-        raise HTTPException(status_code=503, detail="ML models not loaded. Train and restart service.")
+def detect_anomaly(payload: LogFeatures, request: Request):
+    state = request.app.state
 
-    # Convert incoming to DF
-    raw = pd.DataFrame([payload.dict()])
-    # Align features
+    if not hasattr(state, "model_iso"):
+        raise HTTPException(status_code=503, detail="ML models not loaded")
+
+    raw = pd.DataFrame([payload.model_dump()])
+
     try:
-        X_aligned = preprocess_security_logs(raw, expected_features=model_features)
-    except Exception as e:
-        log.exception("Failed to preprocess incoming features: %s", e)
-        raise HTTPException(status_code=400, detail=f"Preprocessing error: {e}")
+        X = preprocess_security_logs(raw, expected_features=state.features)
+        X_scaled = state.scaler.transform(X)
 
-    # Scale
-    try:
-        X_scaled = scaler.transform(X_aligned)
-    except Exception as e:
-        log.exception("Scaling failed: %s", e)
-        raise HTTPException(status_code=500, detail="Scaling error")
+        iso_pred = state.model_iso.predict(X_scaled)[0]
+        score = float(state.model_iso.decision_function(X_scaled)[0])
+        is_anomaly = iso_pred == -1
 
-    # Stage 1: IsolationForest
-    iso_pred = model_iso.predict(X_scaled)[0]         # -1 anomaly, 1 normal
-    iso_score = float(model_iso.decision_function(X_scaled)[0])
-    is_anomaly = (iso_pred == -1)
+        if is_anomaly:
+            rf_enc = int(state.model_rf.predict(X_scaled)[0])
+            attack = state.label_encoder.inverse_transform([rf_enc])[0]
+        else:
+            attack = "Normal"
 
-    # Stage 2: Classification (only necessary if anomaly)
-    if is_anomaly:
-        rf_pred_enc = int(model_rf.predict(X_scaled)[0])
-        try:
-            attack_label = label_encoder.inverse_transform([rf_pred_enc])[0]
-        except Exception:
-            # fallback: if label encoder doesn't map properly
-            attack_label = f"Unknown (Class {rf_pred_enc})" # <-- FIX
-    else:
-        # Try to return human 'Normal' if present
-        try:
-            if "Normal" in label_encoder.classes_:
-                attack_label = "Normal"
-            else:
-                attack_label = label_encoder.inverse_transform([0])[0] # <-- FIX (Typo)
-        except Exception:
-            attack_label = "Normal"
-
-    # Build response
-    response = {
-        "node_id": payload.node_id,
-        "cloud_provider": payload.cloud_provider,
-        "timestamp": payload.timestamp,
-        "is_anomaly": bool(is_anomaly),
-        "anomaly_score": round(iso_score, 6),
-        "attack_type_classified": attack_label
-    }
-
-    # Logging the anomaly event to local log file (JSON Lines)
-    if response["is_anomaly"]:
-        log_entry = {
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
-            "node_id": response["node_id"],
-            "cloud_provider": response["cloud_provider"],
-            "anomaly_score": response["anomaly_score"],
-            "attack_type": response["attack_type_classified"],
-            "raw_event_sample": raw.iloc[0].to_dict()
+        response = {
+            "node_id": payload.node_id,
+            "cloud_provider": payload.cloud_provider,
+            "timestamp": payload.timestamp,
+            "is_anomaly": bool(is_anomaly),
+            "anomaly_score": round(score, 6),
+            "attack_type_classified": attack
         }
-        append_anomaly_log(log_entry)
-        log.warning("Anomaly detected: %s", json.dumps(log_entry, default=str))
 
-        # If the attack is not "Normal", write to forensic ledger and attach its result to response
-        if response["attack_type_classified"] != "Normal":
-            try:
-                # --- THIS IS THE FIX ---
-                # Changed 'action' to 'response_action' to match ledger.py
-                ledger_res = log_incident_to_ledger(log_entry, response_action="AUTOMATED_CONTAINMENT")
-                # --- END OF FIX ---
-                
-                response["forensic_ledger"] = ledger_res
-                if not USE_LOCAL_LEDGER:
-                     log.critical("Forensic ledger entry created (AWS QLDB)")
-                else:
-                     # This log now comes from ledger.py, so we just check for the hash
-                     log.info(f"Forensic ledger entry created (Local File): {str(ledger_res.get('current_hash', 'ERROR')[:12])}")
-            
-            except Exception as e:
-                log.exception("Failed to write to forensic ledger; continuing without ledger result.")
-                response["forensic_ledger"] = {"error": f"ledger_write_failed: {e}"}
+        if is_anomaly and attack != "Normal":
+            incident = {
+                "timestamp": response["timestamp"],
+                "node_id": response["node_id"],
+                "cloud_provider": response["cloud_provider"],
+                "anomaly_score": response["anomaly_score"],
+                "attack_type": attack,
+                "raw_event": raw.iloc[0].to_dict()
+            }
 
-            # --- EXECUTE THE PLAYBOOK ---
-            try:
-                playbook_res = execute_playbook("AUTOMATED_CONTAINMENT", log_entry)
-                response["incident_response"] = playbook_res
-                log.info(f"Playbook execution finished: {playbook_res.get('status')}")
-            except Exception:
-                log.exception("Failed to execute incident response playbook.")
-                response["incident_response"] = {"error": "playbook_execution_failed"}
-            # --- END OF PLAYBOOK BLOCK ---
+            append_anomaly_log(incident)
 
-    return response
+            response["forensic_ledger"] = log_incident_to_ledger(
+                incident,
+                response_action="AUTOMATED_CONTAINMENT"
+            )
 
+            response["incident_response"] = execute_playbook(
+                "AUTOMATED_CONTAINMENT",
+                incident
+            )
+
+        return response
+
+    except Exception as e:
+        log.exception("Detection error")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ingest/aws")
+def ingest_aws_events(request: Request):
+    events = cloudtrail.lookup_events(MaxResults=10)
+    results = []
+
+    for e in events.get("Events", []):
+        normalized = normalize_aws_event(e)
+        payload = LogFeatures(**normalized)
+        res = detect_anomaly(payload, request)
+        results.append(res)
+
+    return {
+        "source": "aws-cloudtrail",
+        "events_processed": len(results),
+        "results": results
+    }
 
 @app.get("/health/es")
 def health_es():
-    """Check elasticsearch connectivity if client available."""
     if Elasticsearch is None:
-        raise HTTPException(status_code=501, detail="Elasticsearch client not installed in this environment.")
+        raise HTTPException(status_code=501, detail="Elasticsearch not installed")
 
-    try:
-        es = Elasticsearch([ES_HOST]) if (ES_HOST := os.getenv("ELASTICSEARCH_HOSTS", None)) else Elasticsearch()
-        if not es.ping():
-            raise HTTPException(status_code=503, detail="Elasticsearch ping failed.")
-        info = es.info()
-        return {"status": "ok", "cluster_name": info.get("cluster_name", "")}
-    except HTTPException:
-        raise
-    except Exception as e:
-        log.exception("Elasticsearch health check failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e))
-    return {"status": "error", "detail": "Elasticsearch health check failed."}
+    es = Elasticsearch([ES_HOST])
+    if not es.ping():
+        raise HTTPException(status_code=503, detail="Elasticsearch unavailable")
+
+    return {"status": "ok", "cluster": es.info().get("cluster_name")}
+
+# =========================
+# LOCAL RUN
+# =========================
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
