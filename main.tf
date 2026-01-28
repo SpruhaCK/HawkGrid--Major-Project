@@ -70,9 +70,10 @@ resource "aws_route_table_association" "public_assoc" {
 # Security Group for Victim Instance
 resource "aws_security_group" "victim_sg" {
   name        = "hawkgrid-victim-sg"
-  description = "Allow SSH and ICMP for HawkGrid demo"
+  description = "Allow RDP, SSH, HTTP, and ICMP for HawkGrid demo"
   vpc_id      = aws_vpc.main.id
 
+# --- WINDOWS ACCESS ---
   ingress {
     description = "RDP from my laptop"
     from_port   = 3389
@@ -81,6 +82,7 @@ resource "aws_security_group" "victim_sg" {
     cidr_blocks = ["103.178.49.202/32"]
   }
 
+# --- LINUX ACCESS & WEB SERVICES ---
   ingress {
     description = "SSH"
     from_port   = 22
@@ -89,6 +91,23 @@ resource "aws_security_group" "victim_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "HTTP for Linux Web Server"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Standard for web servers
+  }
+
+  ingress {
+    description = "HTTPS for Secure Web"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+# --- DIAGNOSTICS ---
   ingress {
   description = "Allow ICMP (Ping)"
   from_port   = -1
@@ -112,7 +131,7 @@ resource "aws_iam_instance_profile" "hawkgrid_profile" {
 }
 
 # EC2 Victim Instance
-resource "aws_instance" "victim" {
+resource "aws_instance" "windows_victim" {
   ami                         = "ami-06b5375e3af24939c" # Windows (us-east-1)
   instance_type               = "t3.micro"
   subnet_id                   = aws_subnet.public.id
@@ -122,7 +141,22 @@ resource "aws_instance" "victim" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "HawkGrid-Victim"
+    Name = "HawkGrid-Windows-Victim"
+    Role = "HawkGrid-Attack-Target"
+  }
+}
+
+resource "aws_instance" "linux_victim" {
+  ami                         = "ami-0fc5d935ebf8bc3bc" # Windows (us-east-1)
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.public.id
+  vpc_security_group_ids      = [aws_security_group.victim_sg.id]
+  iam_instance_profile        = aws_iam_instance_profile.hawkgrid_profile.name
+  key_name                    = "project"
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "HawkGrid-Linux-Victim"
     Role = "HawkGrid-Attack-Target"
   }
 }

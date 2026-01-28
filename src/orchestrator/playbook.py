@@ -42,10 +42,15 @@ AZURE_RULE_PRIORITY = 100
 # MOCK ASSET DATABASE
 # ----------------------------
 ASSET_DATABASE = {
-    "AWS-EC2-B": {
+    "HawkGrid-Windows-Victim": {
         "cloud": "aws",
-        "instance_id": "i-12345abcdef",
-        "nsg_id": "sg-0abcdef123"
+        "instance_id": "i-05b17510751c58c59",
+        "nsg_id": "sg-0076e8e881ba50058"
+    },
+    "HawkGrid-Linux-Victim": {
+        "cloud": "aws",
+        "instance_id": "i-033a0ffd99ca7f434",
+        "nsg_id": "sg-0076e8e881ba50058"
     },
     "Azure-VM-A": {
         "cloud": "azure",
