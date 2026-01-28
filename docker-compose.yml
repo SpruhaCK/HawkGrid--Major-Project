@@ -4,74 +4,59 @@ services:
   orchestrator:
     build: . 
     container_name: hawkgrid-project-orchestrator
-    # Expose the API port (for future dashboard connection)
     ports: 
       - "8000:8000"
-    # Mount the entire project folder for live code changes during development
     volumes: 
       - .:/app
-    # Ensure the orchestrator starts AFTER the logging components are ready
+      - ${USERPROFILE}/.aws:/root/.aws:ro
     depends_on:
       - elasticsearch
+    # Use standard mapping syntax (Key: Value) - NO DASHES here
     environment:
-      # Pass the Elasticsearch URL to the orchestrator Python app
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      
-      # --- ADDED FOR LOCAL DEVELOPMENT ---
-      # Forces playbook.py to use simulation mode
+      AWS_PROFILE: default
+      AWS_REGION: us-east-1
       USE_SIMULATION: "true" 
-      # Forces api.py to use the local .jsonl ledger
       USE_LOCAL_LEDGER: "true"
-      # --- END OF ADDITION ---
-      
-    # Set the working directory to the root of the application code
+      LOG_LEVEL: "INFO"
     working_dir: /app
 
-  # --- MOSQUITTO MQTT BROKER (For real-time alerts/messages) ---
   mqtt:
     image: eclipse-mosquitto:2.0
     container_name: hawkgrid-project-mqtt
     ports:
-      - "1883:1883" # Standard MQTT port
+      - "1883:1883"
 
-  # --- ELASTICSEARCH (The Central Log Database) ---
   elasticsearch:
-    image: elasticsearch:7.17.15 # Critical: Use a specific, stable version
+    image: elasticsearch:7.17.15
     container_name: hawkgrid-project-elasticsearch
     environment:
-      # Disable security and set discovery type for simple local setup
       - discovery.type=single-node
       - xpack.security.enabled=false 
-      # Allocate memory limit (adjust if your machine has less than 4GB)
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    # Persist the data volume so your logs aren't lost when containers stop
     volumes:
       - esdata:/usr/share/elasticsearch/data 
     ports:
-      - "9200:9200" # Main Elasticsearch API port
+      - "9200:9200"
 
-  # --- KIBANA (The Visualization Dashboard) ---
   kibana:
-    image: kibana:7.17.15 # Must match the ES version!
+    image: kibana:7.17.15
     container_name: hawkgrid-project-kibana
     depends_on:
       - elasticsearch
     environment:
-      # Point Kibana to the ES container service name
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200 
     ports:
-      - "5601:5601" # Kibana UI port
+      - "5601:5601"
 
-# Define volumes for data persistence
 volumes:
   esdata:
     driver: local
 
-# Define the network (optional, but good practice; Docker uses 'default' if not specified)
 networks:
   default:
     driver: bridge
