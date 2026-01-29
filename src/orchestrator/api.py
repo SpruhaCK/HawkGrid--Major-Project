@@ -120,23 +120,37 @@ class LogFeatures(BaseModel):
 # =========================
 # HELPERS
 # =========================
-def normalize_aws_event(event: dict) -> dict:
-    event_time = event.get("EventTime")
+# def normalize_aws_event(event: dict) -> dict:
+#     event_time = event.get("EventTime")
     
-    # Convert datetime to string immediately using isoformat()
-    # This ensures no raw datetime objects enter your pipeline
-    if event_time and hasattr(event_time, 'isoformat'):
-        timestamp_str = event_time.isoformat()
-    else:
-        timestamp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+#     # Convert datetime to string immediately using isoformat()
+#     # This ensures no raw datetime objects enter your pipeline
+#     if event_time and hasattr(event_time, 'isoformat'):
+#         timestamp_str = event_time.isoformat()
+#     else:
+#         timestamp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+
+#     return {
+#         "node_id": event.get("Username", "aws-user"),
+#         "cloud_provider": "aws",
+#         "API_Call_Freq": 1,
+#         "Failed_Auth_Count": 1 if event.get("ErrorCode") else 0,
+#         "Network_Egress_MB": 0.0,
+#         "timestamp": timestamp_str  # Forced to String
+#     }
+
+def normalize_aws_event(event: dict) -> dict:
+    # Check for both ErrorCode OR specific ConsoleLogin failures
+    error = event.get("ErrorCode")
+    is_failure = 1 if error or "Failure" in event.get("EventName", "") else 0
 
     return {
         "node_id": event.get("Username", "aws-user"),
         "cloud_provider": "aws",
         "API_Call_Freq": 1,
-        "Failed_Auth_Count": 1 if event.get("ErrorCode") else 0,
+        "Failed_Auth_Count": is_failure,
         "Network_Egress_MB": 0.0,
-        "timestamp": timestamp_str  # Forced to String
+        "timestamp": event.get("EventTime").isoformat() if hasattr(event.get("EventTime"), 'isoformat') else str(event.get("EventTime"))
     }
 
 # =========================
@@ -253,26 +267,29 @@ def detect_anomaly(payload: LogFeatures):
 @app.post("/api/ingest/aws")
 def ingest_aws_events():
     try:
-        events = cloudtrail.lookup_events(MaxResults=10)
+        events = cloudtrail.lookup_events(MaxResults=50) # Pull more logs
         results = []
-
+        
+        # AGGREGATION LOGIC: Group by user to find the "Spike"
+        user_stats = {}
         for e in events.get("Events", []):
-            normalized = normalize_aws_event(e)
-            payload = LogFeatures(**normalized)
+            user = e.get("Username", "aws-user")
+            if user not in user_stats:
+                user_stats[user] = {"API_Call_Freq": 0, "Failed_Auth_Count": 0, "Network_Egress_MB": 0.0}
+            
+            user_stats[user]["API_Call_Freq"] += 1
+            if e.get("ErrorCode") or "Failure" in e.get("EventName", ""):
+                user_stats[user]["Failed_Auth_Count"] += 1
+
+        # Run detection on the AGGREGATED stats
+        for user, stats in user_stats.items():
+            payload = LogFeatures(node_id=user, cloud_provider="aws", **stats, timestamp=datetime.utcnow().isoformat())
             results.append(run_detection(payload))
 
-        # --- THE FIX IS HERE ---
-        # jsonable_encoder converts datetimes to strings automatically
-        return jsonable_encoder({
-            "status": "success",
-            "source": "aws-cloudtrail",
-            "events_processed": len(results),
-            "results": results
-        })
-        
+        return jsonable_encoder({"status": "success", "results": results})
     except Exception as e:
-        log.error(f"AWS Ingest Failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"AWS Connectivity Error: {str(e)}")
+        log.error(f"Aggregated Ingest Failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/demo/attack/{attack_type}")
 def demo_attack(attack_type: str, request: Request):

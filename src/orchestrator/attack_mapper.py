@@ -12,15 +12,15 @@ def map_attack_type(event: dict) -> str:
     egress = event.get("Network_Egress_MB", 0)
 
     # 1. Brute Force: High failed logins
-    if failed_auth > 40:
+    if failed_auth >= 3:
         return "BRUTE_FORCE"
 
     # 2. Port Scan: High API/Connection frequency + moderate traffic
-    if api_freq > 60 and egress > 50:
+    if api_freq > 15 and egress > 5:
         return "PORT_SCAN"
 
     # 3. Data Exfiltration: Massive spikes in outbound data
-    if egress > 500:
+    if egress > 100:
         return "DATA_EXFILTRATION"
 
     # 4. DDoS: Extreme frequency, usually low data per request

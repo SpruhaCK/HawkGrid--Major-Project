@@ -24,23 +24,26 @@ def detect_event(raw_df: pd.DataFrame):
 
     # Step 1: Unsupervised Anomaly Detection
     iso_pred = iso.predict(scaled)[0]      # -1 = anomaly, 1 = normal
-    iso_score = iso.decision_function(scaled)[0]
+    iso_score = float(abs(iso.decision_function(scaled)[0]))
 
     # Convert dataframe row back to a dictionary for the rule-mapper
     event_dict = raw_df.iloc[0].to_dict()
 
-    if iso_pred == -1:
-        # Step 2: Use Rule-Based Mapper for precise labels
-        attack = map_attack_type(event_dict)
-        
+    # if iso_pred == -1:
+    #     # Step 2: Use Rule-Based Mapper for precise labels
+    #     attack = map_attack_type(event_dict)
+    # HEURISTIC OVERRIDE: If failures are high, it's an anomaly regardless of ML
+    is_anomaly = (iso_pred == -1) or (event_dict.get("Failed_Auth_Count", 0) > 5)
+    if is_anomaly:
+        attack = map_attack_type(event_dict)    
         return {
             "is_anomaly": True,
-            "anomaly_score": float(abs(iso_score)),
+            "anomaly_score": iso_score,
             "attack_type": attack
         }
 
     return {
         "is_anomaly": False,
-        "anomaly_score": float(abs(iso_score)),
+        "anomaly_score": iso_score,
         "attack_type": "NORMAL"
     }
