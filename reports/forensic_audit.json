@@ -1697,5 +1697,1528 @@
       "mode": "DEMO",
       "details": "Asset not registered. Advisory containment issued."
     }
+  },
+  {
+    "timestamp": "2026-01-29 15:09:43",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:09:43.300084",
+      "API_Call_Freq": 38,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:09:43",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:09:43.558919",
+      "API_Call_Freq": 8,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:09:43",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:09:43.603279",
+      "API_Call_Freq": 4,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:11:18",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:11:18.255006",
+      "API_Call_Freq": 6,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:11:18",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:11:18.361266",
+      "API_Call_Freq": 5,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:11:18",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:11:18.406908",
+      "API_Call_Freq": 39,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:12:59",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:12:59.227139",
+      "API_Call_Freq": 6,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:12:59",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:12:59.307496",
+      "API_Call_Freq": 5,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:12:59",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:12:59.347843",
+      "API_Call_Freq": 39,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:15:56",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:15:56.277302",
+      "API_Call_Freq": 7,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:15:56",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:15:56.406728",
+      "API_Call_Freq": 36,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:15:56",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:15:56.504283",
+      "API_Call_Freq": 7,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:24:10",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:24:10.472271",
+      "API_Call_Freq": 8,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:24:10",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:24:10.593580",
+      "API_Call_Freq": 35,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:24:10",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:24:10.674166",
+      "API_Call_Freq": 7,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:30:32",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:30:31.946903",
+      "API_Call_Freq": 35,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:30:32",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:30:32.146723",
+      "API_Call_Freq": 9,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:30:32",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:30:32.195782",
+      "API_Call_Freq": 6,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:32:12",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:32:12.944944",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:32:32",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:32:32.777708",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:32:46",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:32:46.719248",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:37:15",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:37:15.040275",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:37:23",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:37:23.914553",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:37:31",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:37:31.138230",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:37:42",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:37:42.407653",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:38:17",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:38:17.720624",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:38:23",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:38:23.761015",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:50:32",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:50:31.958604",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:50:35",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:50:35.110594",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:50:45",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:50:45.627471",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:50:53",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:50:53.605953",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:50:57",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:50:57.936536",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:51:06",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:51:06.476065",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:53:45",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:53:45.973003",
+      "API_Call_Freq": 7,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:53:46",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:53:46.020715",
+      "API_Call_Freq": 33,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:53:46",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:53:46.080190",
+      "API_Call_Freq": 10,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:56:10",
+    "raw_event": {
+      "node_id": "Spruha",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:56:10.171689",
+      "API_Call_Freq": 11,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "Spruha",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:56:10",
+    "raw_event": {
+      "node_id": "resource-explorer-2",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:56:10.204566",
+      "API_Call_Freq": 7,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 15:56:10",
+    "raw_event": {
+      "node_id": "aws-user",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T15:56:10.223045",
+      "API_Call_Freq": 32,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 0.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "aws-user",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:00:44",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:00:44.542878",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:00:50",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:00:50.697893",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:00:56",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:00:56.299122",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:01:02",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:01:02.645113",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:03:06",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:03:05.977425",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:03:09",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:03:09.235646",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:03:20",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:03:20.522250",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:03:26",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:03:26.141207",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": false,
+      "anomaly_score": 0.02,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "NONE",
+      "status": "NO_ACTION"
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:12:36",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:12:36.277528",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:12:44",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:12:44.019166",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 400,
+      "Failed_Auth_Count": 5,
+      "Network_Egress_MB": 900.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:12:48",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:12:48.342414",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 120.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:12:54",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:12:54.306085",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 25,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 20.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:31:06",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:31:06.239007",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 10,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 5.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:31:09",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:31:09.779161",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 15.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:31:19",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:31:19.207305",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 250,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 600.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:31:24",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:31:24.008433",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:35:00",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:35:00.918996",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:35:05",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:35:05.255642",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 250,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 600.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:35:09",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:35:09.654753",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 15.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:35:13",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:35:13.232978",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 10,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 5.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:46:24",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:46:24.409806",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 10,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 5.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 17:46:27",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T17:46:27.596672",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 15.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 18:00:20",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T18:00:20.326555",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 80,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 15.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 18:00:24",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T18:00:24.804455",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 10,
+      "Failed_Auth_Count": 60,
+      "Network_Egress_MB": 5.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 18:00:29",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T18:00:29.860327",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 250,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 600.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
+  },
+  {
+    "timestamp": "2026-01-29 18:00:35",
+    "raw_event": {
+      "node_id": "ec2-victim",
+      "cloud_provider": "aws",
+      "timestamp": "2026-01-29T18:00:35.231501",
+      "src_ip": "172.20.0.1",
+      "dst_ip": "ec2-victim",
+      "API_Call_Freq": 2,
+      "Failed_Auth_Count": 0,
+      "Network_Egress_MB": 1.0
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.98,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "ec2-victim",
+      "mode": "DEMO",
+      "details": "Asset not registered. Advisory containment issued."
+    }
   }
 ]

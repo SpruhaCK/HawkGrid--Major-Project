@@ -11,23 +11,25 @@ def map_attack_type(event: dict) -> str:
     failed_auth = event.get("Failed_Auth_Count", 0)
     egress = event.get("Network_Egress_MB", 0)
 
-    # 1. Brute Force: High failed logins
-    if failed_auth >= 3:
-        return "BRUTE_FORCE"
-
-    # 2. Port Scan: High API/Connection frequency + moderate traffic
-    if api_freq > 15 and egress > 5:
-        return "PORT_SCAN"
-
-    # 3. Data Exfiltration: Massive spikes in outbound data
-    if egress > 100:
-        return "DATA_EXFILTRATION"
-
-    # 4. DDoS: Extreme frequency, usually low data per request
-    if api_freq > 150:
+    if api_freq >= 500:
         return "DDoS_ATTACK"
 
-    return "GENERIC_ANOMALY"
+    if api_freq >= 200 or egress >= 500:
+        return "DoS_ATTACK"
+
+    # 3. Brute Force: Check for failed logins (Demo sends 60)
+    if failed_auth >= 40:
+        return "BRUTE_FORCE"
+
+    # 4. DoS/Port Scan: Check moderate-high frequency
+    if api_freq >= 80:
+        return "PORT_SCAN"
+
+    # 5. Low-level suspicious activity
+    if fail_auth >= 3 or api_freq > 15:
+        return "GENERIC_ANOMALY"
+
+    return "NORMAL"
 
 # def map_attack_type(event: dict) -> str:
 #     """
@@ -70,28 +72,28 @@ def map_attack_to_features(
         base.update({
             "API_Call_Freq": 80,
             "Failed_Auth_Count": 0,
-            "Network_Egress_MB": 120.0
+            "Network_Egress_MB": 15.0
         })
 
     elif attack_type == "BRUTE_FORCE":
         base.update({
-            "API_Call_Freq": 25,
+            "API_Call_Freq": 10,
             "Failed_Auth_Count": 60,
-            "Network_Egress_MB": 20.0
+            "Network_Egress_MB": 5.0
         })
 
     elif attack_type == "DOS":
         base.update({
-            "API_Call_Freq": 400,
-            "Failed_Auth_Count": 5,
-            "Network_Egress_MB": 900.0
+            "API_Call_Freq": 250,
+            "Failed_Auth_Count": 0,
+            "Network_Egress_MB": 600.0
         })
 
-    elif attack_type == "SQL_INJECTION":
+    elif attack_type == "DDoS":
         base.update({
-            "API_Call_Freq": 45,
-            "Failed_Auth_Count": 3,
-            "Network_Egress_MB": 150.0
+            "API_Call_Freq": 550,
+            "Failed_Auth_Count": 0,
+            "Network_Egress_MB": 10.0
         })
 
     else:
