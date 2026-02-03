@@ -32,7 +32,8 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <h4
       data-slot="card-title"
-      className={cn("leading-none", className)}
+      /* Added text-gray-100 to ensure titles are visible on the dark SOC dashboard */
+      className={cn("leading-none font-semibold text-white", className)}
       {...props}
     />
   );
