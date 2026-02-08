@@ -13,34 +13,24 @@ iso = _artifacts["model_iso"]
 features = _artifacts["features"]
 
 def detect_event(raw_df: pd.DataFrame):
-    """
-    Hybrid Detection:
-    1. ML (Isolation Forest) detects IF an event is an anomaly.
-    2. Rules (Attack Mapper) classify WHAT kind of attack it is.
-    """
     # Preprocess and scale
     aligned = preprocess_security_logs(raw_df, features)
     scaled = scaler.transform(aligned)
 
-    # Step 1: Unsupervised Anomaly Detection
-    iso_pred = iso.predict(scaled)[0]      # -1 = anomaly, 1 = normal
-    iso_score = iso.decision_function(scaled)[0]
+    # Step 1: ML Anomaly Detection
+    iso_pred = iso.predict(scaled)[0] # -1 = anomaly
+    iso_score = float(abs(iso.decision_function(scaled)[0]))
 
-    # Convert dataframe row back to a dictionary for the rule-mapper
     event_dict = raw_df.iloc[0].to_dict()
-
-    if iso_pred == -1:
-        # Step 2: Use Rule-Based Mapper for precise labels
+    is_anomaly = (iso_pred == -1) 
+    
+    if is_anomaly:
+        # Step 2: Pass to the smarter mapper we fixed earlier
         attack = map_attack_type(event_dict)
-        
         return {
             "is_anomaly": True,
-            "anomaly_score": float(abs(iso_score)),
+            "anomaly_score": iso_score,
             "attack_type": attack
         }
 
-    return {
-        "is_anomaly": False,
-        "anomaly_score": float(abs(iso_score)),
-        "attack_type": "NORMAL"
-    }
+    return {"is_anomaly": False, "attack_type": "NORMAL"}
