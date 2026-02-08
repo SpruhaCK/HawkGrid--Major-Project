@@ -3,10 +3,8 @@ import json
 import logging
 import time
 from pyqldb.driver.qldb_driver import QldbDriver
-# CORRECTED: Use valid pyqldb error classes
 from pyqldb.errors import ExecuteError, DriverClosedError, SessionPoolEmptyError
 
-# --- Configuration ---
 LEDGER_NAME = "hawkgrid-forensic-ledger"
 TABLE_NAME = "incidents"
 log = logging.getLogger("hawkgrid-ledger-aws")

@@ -42,14 +42,16 @@ AZURE_RULE_PRIORITY = 100
 # MOCK ASSET DATABASE
 # ----------------------------
 ASSET_DATABASE = {
-    "HawkGrid-Windows-Victim": {
-        "cloud": "aws",
-        "instance_id": "i-05b17510751c58c59",
-        "nsg_id": "sg-0076e8e881ba50058"
-    },
-    "HawkGrid-Linux-Victim": {
+    "10.0.1.90": {  # Use your Linux VM's actual internal IP
+        "name": "HawkGrid-Linux-Victim",
         "cloud": "aws",
         "instance_id": "i-033a0ffd99ca7f434",
+        "nsg_id": "sg-0076e8e881ba50058"
+    },
+    "10.0.1.30": {  # Use your Windows VM's actual internal IP
+        "name": "HawkGrid-Windows-Victim",
+        "cloud": "aws",
+        "instance_id": "i-05b17510751c58c59",
         "nsg_id": "sg-0076e8e881ba50058"
     },
     "Azure-VM-A": {
@@ -143,32 +145,34 @@ def execute_playbook(action: str, incident_data: dict) -> dict:
 # =====================================================
 # CLOUD-SPECIFIC ACTIONS
 # =====================================================
-def _isolate_aws_node(asset: dict) -> bool:
-    log.info(
-        "Attempting AWS isolation: instance=%s sg=%s",
-        asset["instance_id"],
-        asset["nsg_id"]
-    )
+def _isolate_aws_node(asset: dict, incident_data: dict) -> bool:
+    """
+    Revised AWS isolation.
+    Instead of just revoking egress, we target the specific attacker IP.
+    """
+    attacker_ip = incident_data.get("src_ip")
+    log.info(f"Attempting AWS isolation for attacker {attacker_ip} on {asset['name']}")
 
     try:
         ec2 = boto3.client("ec2")
-
-        ec2.revoke_security_group_egress(
+        
+        # PRO TIP: For a final project, revoking INGRESS is what stops the attack.
+        # This removes the permission for that specific IP to hit your ports.
+        ec2.revoke_security_group_ingress(
             GroupId=asset["nsg_id"],
             IpPermissions=[{
-                "IpProtocol": "-1",
-                "IpRanges": [{"CidrIp": "0.0.0.0/0"}]
+                "IpProtocol": "-1", # All protocols
+                "FromPort": 0,
+                "ToPort": 65535,
+                "IpRanges": [{"CidrIp": f"{attacker_ip}/32"}] # Block just the attacker
             }]
         )
 
-        log.critical(
-            "AWS CONTAINMENT SUCCESS — egress revoked on %s",
-            asset["nsg_id"]
-        )
+        log.critical(f"AWS CONTAINMENT SUCCESS — {attacker_ip} blocked on {asset['nsg_id']}")
         return True
 
     except ClientError as e:
-        log.error("AWS isolation failed: %s", e)
+        log.error(f"AWS isolation failed: {e}")
         return False
 
 

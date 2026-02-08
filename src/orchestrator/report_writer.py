@@ -1,8 +1,3 @@
-"""
-Forensic report writer
-Safe for Windows / Linux / Docker
-"""
-
 import os
 import json
 import time
