@@ -3298,5 +3298,805 @@
       "mode": "SIMULATION",
       "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
     }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:31",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 6.5,
+      "Failed_Auth_Count": 13.0,
+      "Network_Egress_MB": 0.0019960403442382812,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:28.849604"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:33",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 87.0,
+      "Failed_Auth_Count": 174.0,
+      "Network_Egress_MB": 0.030300140380859375,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:33.570032"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:36",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 7.5,
+      "Failed_Auth_Count": 15.0,
+      "Network_Egress_MB": 0.0021381378173828125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:35.827315"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:40",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 7.5,
+      "Failed_Auth_Count": 15.0,
+      "Network_Egress_MB": 0.0021381378173828125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:40.174723"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:42",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 7.5,
+      "Failed_Auth_Count": 15.0,
+      "Network_Egress_MB": 0.0021381378173828125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:42.326089"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:45",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 7.5,
+      "Failed_Auth_Count": 15.0,
+      "Network_Egress_MB": 0.0021457672119140625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:44.778194"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:47",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 25.0,
+      "Failed_Auth_Count": 50.0,
+      "Network_Egress_MB": 0.003437042236328125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:46.921151"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:49",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 83.0,
+      "Failed_Auth_Count": 166.0,
+      "Network_Egress_MB": 0.028223037719726562,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:49.182501"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:51",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 22.0,
+      "Failed_Auth_Count": 44.0,
+      "Network_Egress_MB": 0.0026912689208984375,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:51.398207"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:17:56",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 5.0,
+      "Failed_Auth_Count": 10.0,
+      "Network_Egress_MB": 0.0006122589111328125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:17:56.126367"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "BRUTE_FORCE"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:18:02",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 3.5,
+      "Failed_Auth_Count": 7.0,
+      "Network_Egress_MB": 0.0004405975341796875,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:18:01.973613"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "GENERIC_ANOMALY"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:18:14",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1.0,
+      "Failed_Auth_Count": 2.0,
+      "Network_Egress_MB": 0.000125885009765625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:18:13.811604"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:18:16",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2.5,
+      "Failed_Auth_Count": 5.0,
+      "Network_Egress_MB": 0.0003147125244140625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:18:15.975019"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "GENERIC_ANOMALY"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:18:42",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1.0,
+      "Failed_Auth_Count": 2.0,
+      "Network_Egress_MB": 0.000125885009765625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:18:41.777845"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:18:44",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2.5,
+      "Failed_Auth_Count": 5.0,
+      "Network_Egress_MB": 0.0003147125244140625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:18:44.008141"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "GENERIC_ANOMALY"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:20:23",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 9.5,
+      "Failed_Auth_Count": 2.0,
+      "Network_Egress_MB": 0.001087188720703125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:20:23.239667"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "NORMAL"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:20:28",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 187.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.021457672119140625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:20:27.848297"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "PORT_SCAN"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:20:30",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 266.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.0304412841796875,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:20:30.097056"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:20:32",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 250.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.028667449951171875,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:20:32.181074"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:20:35",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 291.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.03330230712890625,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:20:34.371876"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:03",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 324.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.037136077880859375,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:03.218266"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:05",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1833.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.20982742309570312,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:05.398918"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:10",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2037.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.23317337036132812,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:10.211199"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:12",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2108.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.241241455078125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:12.481399"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:15",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1680.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.1922607421875,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:14.837052"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:17",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2095.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.23975372314453125,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:17.058284"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:19",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2144.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.24541854858398438,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:19.252067"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:21",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2196.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.2513694763183594,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:21.508861"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:24",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1357.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.15535354614257812,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:23.706931"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:26",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2374.5,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.2717399597167969,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:25.951514"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:28",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 2644.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.302581787109375,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:28.178689"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
+  },
+  {
+    "timestamp": "2026-02-09 09:21:31",
+    "raw_event": {
+      "node_id": "10.0.1.90",
+      "dst_ip": "3.210.203.211",
+      "src_ip": "172.16.10.133",
+      "API_Call_Freq": 1885.0,
+      "Failed_Auth_Count": 0.0,
+      "Network_Egress_MB": 0.21572113037109375,
+      "cloud_provider": "aws",
+      "timestamp": "2026-02-09T09:21:30.490807"
+    },
+    "detection": {
+      "is_anomaly": true,
+      "anomaly_score": 0.022951699210865095,
+      "attack_type": "DDoS_ATTACK"
+    },
+    "response": {
+      "playbook_name": "AUTOMATED_CONTAINMENT",
+      "status": "SIMULATED_SUCCESS",
+      "node_id": "10.0.1.90",
+      "mode": "SIMULATION",
+      "details": "Simulated 'AUTOMATED_CONTAINMENT' executed successfully."
+    }
   }
 ]

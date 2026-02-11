@@ -25,12 +25,12 @@ const attackTypeData = [
 ];
 
 const locationData = [
-  { country: "Germany", attacks: 45, intensity: "high" },
-  { country: "Nigeria", attacks: 38, intensity: "high" },
-  { country: "India", attacks: 32, intensity: "medium" },
-  { country: "Russia", attacks: 28, intensity: "medium" },
-  { country: "China", attacks: 25, intensity: "medium" },
-  { country: "Brazil", attacks: 15, intensity: "low" }
+  { country: "Germany", attacks: 45, intensity: "high", target: "aws" },
+  { country: "Nigeria", attacks: 38, intensity: "high", target: "aws" },
+  { country: "India", attacks: 32, intensity: "medium", target: "azure" },
+  { country: "Russia", attacks: 28, intensity: "medium", target: "azure" },
+  { country: "China", attacks: 25, intensity: "medium", target: "aws" },
+  { country: "Brazil", attacks: 15, intensity: "low", target: "azure" }
 ];
 
 export function ChartsSection() {
@@ -134,42 +134,67 @@ export function ChartsSection() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Globe className="h-5 w-5 text-purple-400" />
-            <span>Attack Origins</span>
+            <span>Global Attack Map</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          {/* Legend */}
+          <div className="flex items-center justify-center space-x-4 mb-4 pb-3 border-b border-gray-700/50">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-[2px] bg-[#F59E0B]"></div>
+              <span className="text-xs text-gray-400">AWS Traffic</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-[2px] bg-[#06B6D4]"></div>
+              <span className="text-xs text-gray-400">Azure Traffic</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
             {locationData.map((location, index) => {
               const getIntensityColor = (intensity: string) => {
                 switch (intensity) {
-                  case "high": return "bg-red-500";
-                  case "medium": return "bg-orange-500";
-                  case "low": return "bg-yellow-500";
+                  case "high": return "bg-[#EF4444]";
+                  case "medium": return "bg-[#F59E0B]";
+                  case "low": return "bg-[#F59E0B]/50";
                   default: return "bg-gray-500";
                 }
               };
 
-              const getIntensityBg = (intensity: string) => {
-                switch (intensity) {
-                  case "high": return "bg-red-950/30 border-red-500/30";
-                  case "medium": return "bg-orange-950/30 border-orange-500/30";
-                  case "low": return "bg-yellow-950/30 border-yellow-500/30";
-                  default: return "bg-gray-950/30 border-gray-500/30";
-                }
+              const getTargetColor = (target: string) => {
+                return target === "aws" ? "border-[#F59E0B]/50" : "border-[#06B6D4]/50";
+              };
+
+              const getTargetBg = (target: string) => {
+                return target === "aws" ? "bg-[#F59E0B]/10" : "bg-[#06B6D4]/10";
+              };
+
+              const getTrafficLineColor = (target: string) => {
+                return target === "aws" ? "bg-[#F59E0B]" : "bg-[#06B6D4]";
               };
 
               return (
                 <div 
                   key={index}
-                  className={`flex items-center justify-between p-3 rounded border ${getIntensityBg(location.intensity)}`}
+                  className={`p-3 rounded-lg border ${getTargetBg(location.target)} ${getTargetColor(location.target)} hover:border-opacity-100 transition-all relative`}
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${getIntensityColor(location.intensity)}`}></div>
-                    <span className="text-gray-300">{location.country}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-400">{location.attacks} attacks</div>
-                    <div className="text-xs text-gray-500 capitalize">{location.intensity}</div>
+                  {/* Traffic line indicator */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${getTrafficLineColor(location.target)}`}></div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${getIntensityColor(location.intensity)} shadow-lg`}></div>
+                      <div>
+                        <div className="text-sm text-gray-300">{location.country}</div>
+                        <div className="text-xs text-gray-500">
+                          → {location.target === "aws" ? "AWS Node" : "Azure Node"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-mono text-gray-300">{location.attacks}</div>
+                      <div className="text-xs text-gray-500 capitalize">{location.intensity}</div>
+                    </div>
                   </div>
                 </div>
               );
