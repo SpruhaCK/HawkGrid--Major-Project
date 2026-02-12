@@ -104,11 +104,12 @@ export function ChartsSection() {
               </Pie>
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1f2937', 
+                  backgroundColor: '#1f2937',
                   border: '1px solid #374151',
                   borderRadius: '8px',
-                  color: '#f3f4f6'
+                  color: '#ffffff'
                 }}
+                itemStyle={{ color: '#ffffff' }}
               />
             </PieChart>
           </ResponsiveContainer>

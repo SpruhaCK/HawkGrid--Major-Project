@@ -12,7 +12,7 @@ export function LiveAttackTopology() {
       </CardHeader>
       <CardContent className="py-8">
         <div className="relative h-80 flex items-center justify-center">
-          {/* Left Node - Attacker (Far Left) */}
+          {/* Left Node - Attacker*/}
           <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center">
             <div className="w-20 h-20 rounded-full bg-[#EF4444]/20 border-2 border-[#EF4444] flex items-center justify-center shadow-lg shadow-[#EF4444]/50 animate-pulse">
               <Skull className="h-10 w-10 text-[#EF4444]" />
@@ -23,7 +23,7 @@ export function LiveAttackTopology() {
             </div>
           </div>
 
-          {/* Center Node - Orchestrator (Dead Center) */}
+          {/* Center Node - Orchestrator*/}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#06B6D4]/30 to-purple-500/30 border-2 border-[#06B6D4] flex items-center justify-center shadow-2xl shadow-[#06B6D4]/50">
               <Shield className="h-12 w-12 text-[#06B6D4]" />
@@ -34,8 +34,8 @@ export function LiveAttackTopology() {
             </div>
           </div>
 
-          {/* Right Top Node - AWS (Vertically Stacked) */}
-          <div className="absolute right-8 top-12 flex flex-col items-center">
+          {/* Right Top Node - AWS*/}
+          <div className="absolute right-8 top-1 flex flex-col items-center">
             <div className="w-20 h-20 rounded-full bg-[#F59E0B]/20 border-2 border-[#F59E0B] flex items-center justify-center shadow-lg shadow-[#F59E0B]/50">
               <Cloud className="h-10 w-10 text-[#F59E0B]" />
             </div>
@@ -45,8 +45,8 @@ export function LiveAttackTopology() {
             </div>
           </div>
 
-          {/* Right Bottom Node - Azure (Vertically Stacked with Clear Separation) */}
-          <div className="absolute right-8 bottom-12 flex flex-col items-center">
+          {/* Right Bottom Node - Azure*/}
+          <div className="absolute right-8 top-1/2 flex flex-col items-center">
             <div className="w-20 h-20 rounded-full bg-[#06B6D4]/20 border-2 border-[#06B6D4] flex items-center justify-center shadow-lg shadow-[#06B6D4]/50">
               <Cloud className="h-10 w-10 text-[#06B6D4]" />
             </div>
@@ -60,10 +60,10 @@ export function LiveAttackTopology() {
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             {/* Red pulsing line: Attacker -> Orchestrator */}
             <line
-              x1="20%"
-              y1="50%"
-              x2="45%"
-              y2="50%"
+              x1="17%"
+              y1="43%"
+              x2="43%"
+              y2="43%"
               stroke="#EF4444"
               strokeWidth="3"
               strokeDasharray="8,4"
@@ -75,10 +75,10 @@ export function LiveAttackTopology() {
 
             {/* Red pulsing line: Orchestrator -> AWS (Clean Upper Path) */}
             <line
-              x1="55%"
-              y1="42%"
-              x2="75%"
-              y2="23%"
+              x1="57%"
+              y1="43%"
+              x2="83%"
+              y2="14%"
               stroke="#EF4444"
               strokeWidth="3"
               strokeDasharray="8,4"
@@ -87,14 +87,14 @@ export function LiveAttackTopology() {
 
             {/* Green solid line: Orchestrator -> Azure (Clean Lower Path) */}
             <line
-              x1="55%"
-              y1="58%"
-              x2="75%"
-              y2="77%"
+              x1="57%"
+              y1="43%"
+              x2="83%"
+              y2="64%"
               stroke="#22C55E"
               strokeWidth="3"
             />
-            <text x="62%" y="72%" fill="#22C55E" fontSize="10" className="font-mono">
+            <text x="67%" y="60%" fill="#22C55E" fontSize="10" className="font-mono">
               Secure
             </text>
           </svg>
