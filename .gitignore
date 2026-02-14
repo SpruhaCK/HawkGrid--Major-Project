@@ -9,12 +9,17 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Terraform
-.terraform/
-terraform.tfstate
-terraform.tfstate.backup
-*.tfstate
-*.tfstate.backup
+# Terraform directories
+**/.terraform/
+
+# Terraform state files
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/*.tfstate
+**/*.tfstate.backup
+
+# Terraform plan files
+*.tfplan
 
 # Docker
 docker-compose.override.yml
@@ -41,5 +46,13 @@ Thumbs.db
 # Logs & Runtime Files
 # logs/
 # *.log
+
+# Ignore the actual log contents
+ledger/*.jsonl
+reports/*.json
+
+# But ! (Exclamation) means "Don't ignore this specific file"
+!ledger/.gitkeep
+!reports/.gitkeep
 
 node_modules/

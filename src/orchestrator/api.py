@@ -117,8 +117,8 @@ app = FastAPI(title="HawkGrid Detection Core", version="1.0", lifespan=lifespan)
 class LogFeatures(BaseModel):
     model_config = ConfigDict(extra="allow")
     node_id: Optional[str] = "unknown-node"
-    dst_ip: str # Required to identify the target
-    src_ip: str # Required to identify attacker
+    dst_ip: str
+    src_ip: str
     API_Call_Freq: float = 0.0
     Failed_Auth_Count: float = 0.0
     Network_Egress_MB: float = 0.0

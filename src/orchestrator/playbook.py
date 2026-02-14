@@ -1,14 +1,3 @@
-"""
-playbook.py
-
-HawkGrid Tactical Incident Response Engine
-
-- Executes automated containment actions
-- Supports AWS, Azure, and Simulation modes
-- NEVER crashes the detection pipeline
-- Demo-safe and judge-safe
-"""
-
 import os
 import logging
 import boto3
@@ -17,12 +6,12 @@ from botocore.exceptions import ClientError
 # ----------------------------
 # OPTIONAL AZURE SUPPORT
 # ----------------------------
-try:
-    from azure.identity import AzureCliCredential
-    from azure.mgmt.network import NetworkManagementClient
-    AZURE_SDK_AVAILABLE = True
-except ImportError:
-    AZURE_SDK_AVAILABLE = False
+# try:
+#     from azure.identity import AzureCliCredential
+#     from azure.mgmt.network import NetworkManagementClient
+#     AZURE_SDK_AVAILABLE = True
+# except ImportError:
+#     AZURE_SDK_AVAILABLE = False
 
 # ----------------------------
 # LOGGING
@@ -35,8 +24,8 @@ log.setLevel(logging.INFO)
 # ----------------------------
 USE_SIMULATION = os.getenv("USE_SIMULATION", "true").lower() == "true"
 
-AZURE_DENY_RULE_NAME = "HAWKGRID-DENY-ALL-EGRESS"
-AZURE_RULE_PRIORITY = 100
+# AZURE_DENY_RULE_NAME = "HAWKGRID-DENY-ALL-EGRESS"
+# AZURE_RULE_PRIORITY = 100
 
 # ----------------------------
 # MOCK ASSET DATABASE
@@ -53,12 +42,12 @@ ASSET_DATABASE = {
         "cloud": "aws",
         "instance_id": "i-05b17510751c58c59",
         "nsg_id": "sg-0076e8e881ba50058"
-    },
-    "Azure-VM-A": {
-        "cloud": "azure",
-        "resource_group": "HawkGrid-Prod-RG",
-        "nsg_name": "vm-a-nsg"
-    }
+    # },
+    # "Azure-VM-A": {
+    #     "cloud": "azure",
+    #     "resource_group": "HawkGrid-Prod-RG",
+    #     "nsg_name": "vm-a-nsg"
+    # }
 }
 
 # =====================================================
@@ -116,8 +105,8 @@ def execute_playbook(action: str, incident_data: dict) -> dict:
 
         if asset["cloud"] == "aws":
             success = _isolate_aws_node(asset)
-        elif asset["cloud"] == "azure":
-            success = _isolate_azure_node(asset)
+        # elif asset["cloud"] == "azure":
+        #     success = _isolate_azure_node(asset)
         else:
             raise ValueError(f"Unknown cloud provider: {asset['cloud']}")
 
@@ -176,47 +165,47 @@ def _isolate_aws_node(asset: dict, incident_data: dict) -> bool:
         return False
 
 
-def _isolate_azure_node(asset: dict) -> bool:
-    if not AZURE_SDK_AVAILABLE:
-        log.error("Azure SDK not installed")
-        return False
+# def _isolate_azure_node(asset: dict) -> bool:
+#     if not AZURE_SDK_AVAILABLE:
+#         log.error("Azure SDK not installed")
+#         return False
 
-    try:
-        credential = AzureCliCredential()
-        subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-        if not subscription_id:
-            raise ValueError("AZURE_SUBSCRIPTION_ID not set")
+#     try:
+#         credential = AzureCliCredential()
+#         subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")
+#         if not subscription_id:
+#             raise ValueError("AZURE_SUBSCRIPTION_ID not set")
 
-        client = NetworkManagementClient(
-            credential,
-            subscription_id
-        )
+#         client = NetworkManagementClient(
+#             credential,
+#             subscription_id
+#         )
 
-        rule = {
-            "protocol": "*",
-            "source_address_prefix": "*",
-            "destination_address_prefix": "Internet",
-            "source_port_range": "*",
-            "destination_port_range": "*",
-            "access": "Deny",
-            "priority": AZURE_RULE_PRIORITY,
-            "direction": "Outbound",
-            "description": "HAWKGRID AUTOMATED ISOLATION"
-        }
+#         rule = {
+#             "protocol": "*",
+#             "source_address_prefix": "*",
+#             "destination_address_prefix": "Internet",
+#             "source_port_range": "*",
+#             "destination_port_range": "*",
+#             "access": "Deny",
+#             "priority": AZURE_RULE_PRIORITY,
+#             "direction": "Outbound",
+#             "description": "HAWKGRID AUTOMATED ISOLATION"
+#         }
 
-        client.security_rules.begin_create_or_update(
-            asset["resource_group"],
-            asset["nsg_name"],
-            AZURE_DENY_RULE_NAME,
-            rule
-        ).result()
+#         client.security_rules.begin_create_or_update(
+#             asset["resource_group"],
+#             asset["nsg_name"],
+#             AZURE_DENY_RULE_NAME,
+#             rule
+#         ).result()
 
-        log.critical(
-            "AZURE CONTAINMENT SUCCESS — rule applied to %s",
-            asset["nsg_name"]
-        )
-        return True
+#         log.critical(
+#             "AZURE CONTAINMENT SUCCESS — rule applied to %s",
+#             asset["nsg_name"]
+#         )
+#         return True
 
-    except Exception as e:
-        log.error("Azure isolation failed: %s", e)
-        return False
+#     except Exception as e:
+#         log.error("Azure isolation failed: %s", e)
+#         return False

@@ -5,6 +5,9 @@ import time
 from collections import Counter
 import socket
 
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8000/api/detect")
+
 # --- CONFIGURATION ---
 WINDOW_SIZE = 2.0
 packet_buffer = []
@@ -38,7 +41,7 @@ def get_active_interface():
 def get_aws_targets():
     print("[*] Fetching AWS IPs...")
     try:
-        ec2 = boto3.client('ec2', region_name="us-east-1")
+        ec2 = boto3.client('ec2', region_name=AWS_REGION)
         response = ec2.describe_instances(Filters=[
             {'Name': 'tag:Name', 'Values': ["HawkGrid-Linux-Victim", "HawkGrid-Windows-Victim"]},
             {'Name': 'instance-state-name', 'Values': ['running']}
@@ -80,7 +83,7 @@ def analyze_window():
     
     try:
         # 5 second timeout to handle Orchestrator load
-        requests.post("http://localhost:8000/api/detect", json=payload, timeout=5)
+        requests.post(ORCHESTRATOR_URL, json=payload, timeout=5)
         print(f"[+] Sent {count} packets to API for {dst}")
     except:
         pass # Keep running even if API is slow
