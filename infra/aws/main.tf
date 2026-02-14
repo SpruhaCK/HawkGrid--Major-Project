@@ -138,7 +138,7 @@ resource "aws_instance" "windows_victim" {
   vpc_security_group_ids      = [aws_security_group.victim_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.hawkgrid_profile.name
   key_name                    = "project"
-  associate_public_ip_address = true
+  associate_public_ip_address = false
 
   tags = {
     Name = "HawkGrid-Windows-Victim"
@@ -153,7 +153,7 @@ resource "aws_instance" "linux_victim" {
   vpc_security_group_ids      = [aws_security_group.victim_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.hawkgrid_profile.name
   key_name                    = "project"
-  associate_public_ip_address = true
+  associate_public_ip_address = false
 
   tags = {
     Name = "HawkGrid-Linux-Victim"
