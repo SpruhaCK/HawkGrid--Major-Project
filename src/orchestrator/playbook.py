@@ -42,7 +42,7 @@ ASSET_DATABASE = {
         "cloud": "aws",
         "instance_id": "i-05b17510751c58c59",
         "nsg_id": "sg-0076e8e881ba50058"
-    # },
+    }
     # "Azure-VM-A": {
     #     "cloud": "azure",
     #     "resource_group": "HawkGrid-Prod-RG",

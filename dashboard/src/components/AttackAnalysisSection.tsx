@@ -1,139 +1,178 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Clock } from "lucide-react";
 
-const attackData = [
-  {
-    id: 1,
-    timestamp: "2026-02-10 16:11:47",
-    attackType: "Volumetric DDoS",
-    sourceIP: "192.168.0.100",
-    targetAsset: "AWS-Production-Web-1",
-    location: "Nigeria",
-    severity: "Critical",
-    severityColor: "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30",
-    packetsBlocked: "2.4M"
-  },
-  {
-    id: 2,
-    timestamp: "2026-02-10 14:32:05",
-    attackType: "SQL Injection",
-    sourceIP: "185.24.76.11",
-    targetAsset: "Database-Gateway-2",
-    location: "Germany",
-    severity: "High",
-    severityColor: "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30",
-    packetsBlocked: "847"
-  },
-  {
-    id: 3,
-    timestamp: "2026-02-10 13:18:22",
-    attackType: "SSH Brute Force",
-    sourceIP: "203.45.128.94",
-    targetAsset: "Azure-Backend-Server",
-    location: "China",
-    severity: "High",
-    severityColor: "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30",
-    packetsBlocked: "12.3K"
-  },
-  {
-    id: 4,
-    timestamp: "2026-02-10 11:45:10",
-    attackType: "Port Scan",
-    sourceIP: "78.142.19.200",
-    targetAsset: "AWS-API-Gateway",
-    location: "Russia",
-    severity: "Medium",
-    severityColor: "bg-[#06B6D4]/20 text-[#06B6D4] border-[#06B6D4]/30",
-    packetsBlocked: "3.2K"
-  },
-  {
-    id: 5,
-    timestamp: "2026-02-10 09:23:55",
-    attackType: "XSS Attempt",
-    sourceIP: "45.89.173.44",
-    targetAsset: "Web-Application-Firewall",
-    location: "Ukraine",
-    severity: "Medium",
-    severityColor: "bg-[#06B6D4]/20 text-[#06B6D4] border-[#06B6D4]/30",
-    packetsBlocked: "156"
-  },
-  {
-    id: 6,
-    timestamp: "2026-02-10 07:50:31",
-    attackType: "Credential Stuffing",
-    sourceIP: "91.203.45.78",
-    targetAsset: "User-Auth-Service",
-    location: "Brazil",
-    severity: "High",
-    severityColor: "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30",
-    packetsBlocked: "8.7K"
-  },
-  {
-    id: 7,
-    timestamp: "2026-02-10 05:12:08",
-    attackType: "DNS Amplification",
-    sourceIP: "172.56.203.101",
-    targetAsset: "DNS-Resolver-01",
-    location: "India",
-    severity: "Critical",
-    severityColor: "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30",
-    packetsBlocked: "1.8M"
+// --- CONFIGURATION ---
+const getSeverityConfig = (score: number, attackType: string) => {
+  let level = "Medium";
+  let color = "bg-[#06B6D4]/20 text-[#06B6D4] border-[#06B6D4]/30"; // Blue
+
+  const type = attackType?.toLowerCase() || "";
+  
+  if (score > 0.7 || type.includes("ddos") || type.includes("dos") || type.includes("amplification")) {
+    level = "Critical";
+    color = "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30"; // Red
+  } else if (score > 0.4 || type.includes("brute") || type.includes("injection") || type.includes("stuffing")) {
+    level = "High";
+    color = "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"; // Amber
   }
-];
+  return { level, color };
+};
 
 export function AttackAnalysisSection() {
+  const [attacks, setAttacks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchLogs = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/live-logs");
+      const rawData = await response.json();
+
+      // Sort Oldest -> Newest for correct grouping
+      rawData.sort((a: any, b: any) => {
+        const tA = new Date(a.incident?.timestamp || 0).getTime();
+        const tB = new Date(b.incident?.timestamp || 0).getTime();
+        return tA - tB;
+      });
+
+      const aggregatedAttacks: any[] = [];
+      let currentGroup: any = null;
+
+      rawData.forEach((block: any, index: number) => {
+        const incident = block.incident || {};
+        const raw = incident.raw_event || {};
+        
+        const timestamp = incident.timestamp || new Date().toISOString();
+        const attackType = incident.attack_type || "Unknown Anomaly";
+        const srcIp = incident.src_ip || "Unknown";
+        const assetName = incident.node_id || "Unknown Asset"; 
+        const score = incident.anomaly_score || 0;
+        
+        const currHash = block.hash || "PENDING";
+        const packetCount = raw.API_Call_Freq ? Math.floor(raw.API_Call_Freq) : 1;
+
+        // Grouping Logic (30s window)
+        const isSameGroup = currentGroup && 
+                            currentGroup.attackType === attackType &&
+                            currentGroup.sourceIP === srcIp &&
+                            currentGroup.targetAsset === assetName &&
+                            (new Date(timestamp).getTime() - new Date(currentGroup.rawEndTime).getTime() < 30000); 
+
+        if (isSameGroup) {
+          // Update existing group
+          currentGroup.rawEndTime = timestamp;
+          currentGroup.packetSum += packetCount;
+          
+          const startTimeStr = currentGroup.rawStartTime.split('T')[1]?.split('.')[0];
+          const endTimeStr = timestamp.split('T')[1]?.split('.')[0];
+          currentGroup.timestampDisplay = `${startTimeStr} - ${endTimeStr}`;
+          currentGroup.packetsBlocked = `${currentGroup.packetSum} Reqs`;
+
+        } else {
+          // Push previous group
+          if (currentGroup) aggregatedAttacks.push(currentGroup);
+
+          const { level, color } = getSeverityConfig(score, attackType);
+          const timeStr = timestamp.split('T')[1]?.split('.')[0] || timestamp;
+
+          currentGroup = {
+            id: currHash || index,
+            rawStartTime: timestamp,
+            rawEndTime: timestamp,
+            timestampDisplay: timeStr,
+            attackType: attackType,
+            sourceIP: srcIp,
+            targetAsset: assetName,
+            severity: level,
+            severityColor: color,
+            packetSum: packetCount,
+            packetsBlocked: `${packetCount} Reqs`
+          };
+        }
+      });
+
+      // Push final group
+      if (currentGroup) aggregatedAttacks.push(currentGroup);
+
+      // Reverse to show Newest First
+      setAttacks(aggregatedAttacks.reverse());
+      setLoading(false);
+
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogs();
+    const interval = setInterval(fetchLogs, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <AlertCircle className="h-5 w-5 text-[#EF4444]" />
-          <span>Detailed Attack Analysis</span>
+          <span>Detailed Attack Analysis (Live)</span>
         </CardTitle>
       </CardHeader>
+      
       <CardContent>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="border-gray-700 hover:bg-transparent">
-                <TableHead className="text-gray-400">Timestamp</TableHead>
+                <TableHead className="text-gray-400 w-[180px]">
+                  <div className="flex items-center space-x-1">
+                    <Clock className="h-3 w-3" />
+                    <span>Duration</span>
+                  </div>
+                </TableHead>
                 <TableHead className="text-gray-400">Attack Type</TableHead>
                 <TableHead className="text-gray-400">Source IP</TableHead>
                 <TableHead className="text-gray-400">Target Asset</TableHead>
-                <TableHead className="text-gray-400">Location</TableHead>
                 <TableHead className="text-gray-400">Severity</TableHead>
-                <TableHead className="text-gray-400 text-right">Packets Blocked</TableHead>
+                <TableHead className="text-gray-400 text-right">Blocked</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {attackData.map((attack) => (
-                <TableRow key={attack.id} className="border-gray-700 hover:bg-gray-700/30">
-                  <TableCell className="font-mono text-sm text-gray-300">
-                    {attack.timestamp}
-                  </TableCell>
-                  <TableCell className="text-gray-200 font-medium">
-                    {attack.attackType}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-[#06B6D4]">
-                    {attack.sourceIP}
-                  </TableCell>
-                  <TableCell className="text-gray-300">
-                    {attack.targetAsset}
-                  </TableCell>
-                  <TableCell className="text-gray-300">
-                    {attack.location}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={attack.severityColor}>
-                      {attack.severity}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-right text-gray-300">
-                    {attack.packetsBlocked}
+              {attacks.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-gray-500 py-8">
+                    {loading ? "Connecting to Live Ledger..." : "No active threats detected."}
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                // Show only top 10 rows
+                attacks.slice(0, 10).map((attack) => (
+                  <TableRow key={attack.id} className="border-gray-700 hover:bg-gray-700/30 transition-colors">
+                    <TableCell className="font-mono text-xs text-gray-300 whitespace-nowrap">
+                      {attack.timestampDisplay}
+                    </TableCell>
+                    <TableCell className="text-gray-200 font-medium">
+                      {attack.attackType}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm text-[#06B6D4]">
+                      {attack.sourceIP}
+                    </TableCell>
+                    <TableCell className="text-gray-300 text-sm">
+                      {attack.targetAsset}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${attack.severityColor} border`}>
+                        {attack.severity}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm text-right text-gray-300">
+                      {attack.packetsBlocked}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
