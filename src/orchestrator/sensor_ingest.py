@@ -4,6 +4,7 @@ import boto3
 import time
 from collections import Counter
 import socket
+import os
 
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8000/api/detect")

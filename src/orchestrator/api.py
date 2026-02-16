@@ -26,7 +26,7 @@ from src.orchestrator.attack_mapper import map_attack_to_features
 
 # --- GLOBAL STATE ---
 IP_MAPPING_CACHE = {} 
-USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "false").lower() == "true"  # <-- uncomment this line to use AWS QLDB instead of local ledger
+USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "true").lower() == "true"  # <-- uncomment this line to use AWS QLDB instead of local ledger
 # USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "true").lower() == "true" # <-- Uncomment this line to use local ledger instead of AWS QLDB
 
 if USE_LOCAL_LEDGER:
