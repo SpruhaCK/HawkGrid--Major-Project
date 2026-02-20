@@ -151,7 +151,7 @@ def detect_anomaly(payload: LogFeatures):
         response_action_status = "SIMULATED_SUCCESS" # Default or based on logic
 
         # Perform isolation only if anomaly
-        if detection.get("is_anomaly") and provider:
+        if detection.get("is_anomaly") and detection.get("attack_type") != "NORMAL" and provider:
             response_action = execute_playbook(
                 "AUTOMATED_CONTAINMENT",
                 incident_data,
