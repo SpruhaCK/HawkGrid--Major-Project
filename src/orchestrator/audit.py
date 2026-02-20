@@ -2,7 +2,6 @@ import json
 import hashlib
 import os
 
-# Ensure the logs directory exists
 os.makedirs("logs", exist_ok=True)
 LOG_FILE = "logs/events.log"
 
@@ -16,7 +15,6 @@ def get_last_hash():
     
     try:
         with open(LOG_FILE, "rb") as f:
-            # Move to the end of the file and seek backward to find the last newline
             f.seek(-2, os.SEEK_END)
             while f.read(1) != b"\n":
                 f.seek(-2, os.SEEK_CUR)
@@ -36,18 +34,14 @@ def log_event(ev):
     """
     prev_hash = get_last_hash()
     
-    # Create the data block including the previous hash
-    # Sorting keys ensures the hash is consistent even if dict order changes
     log_entry = {
         "event": ev,
         "previous_hash": prev_hash
     }
     
-    # Generate the current hash
     entry_string = json.dumps(log_entry, sort_keys=True)
     current_hash = hashlib.sha256(entry_string.encode()).hexdigest()
     
-    # Final structure for the file
     final_record = {
         "hash": current_hash,
         "previous_hash": prev_hash,

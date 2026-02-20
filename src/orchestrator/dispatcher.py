@@ -1,4 +1,3 @@
-# minimal dispatcher using MQTT (no signing yet)
 import json
 import paho.mqtt.publish as publish
 

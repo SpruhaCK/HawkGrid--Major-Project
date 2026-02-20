@@ -1,199 +1,189 @@
-import sys
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
-import time
 import logging
 import joblib
-import boto3
 import pandas as pd
-from typing import Optional, List
+from typing import Optional
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 
-# --- PATH SETUP ---
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
-
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, ConfigDict
-from fastapi.encoders import jsonable_encoder
 
-# --- LOCAL IMPORTS ---
 from src.orchestrator.playbook import execute_playbook
 from src.orchestrator.detector import detect_event
 from src.orchestrator.report_writer import build_report, append_report
-from src.orchestrator.attack_mapper import map_attack_to_features
+from src.blockchain.ledger_factory import get_ledger
+from src.cloud.provider_factory import get_cloud_providers
 
-# --- GLOBAL STATE ---
-IP_MAPPING_CACHE = {} 
-USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "true").lower() == "true"  # <-- uncomment this line to use AWS QLDB instead of local ledger
-# USE_LOCAL_LEDGER = os.getenv("USE_LOCAL_LEDGER", "true").lower() == "true" # <-- Uncomment this line to use local ledger instead of AWS QLDB
+# =========================
+# GLOBAL STATE
+# =========================
 
-if USE_LOCAL_LEDGER:
-    from src.blockchain.ledger import log_incident_to_ledger
-else:
-    from src.blockchain.ledger_aws import log_incident_to_ledger
-
-# --- CONFIG ---
-MODEL_PATH = os.getenv("HG_MODEL_PATH", "src/ml/hawkgrid_pipeline.joblib")
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("hawkgrid-api")
 
+MODEL_PATH = os.getenv("HG_MODEL_PATH", "src/ml/hawkgrid_pipeline.joblib")
+IP_MAPPING_CACHE = {}
+
 # =========================
-# ASSET DISCOVERY HELPERS
+# ASSET DISCOVERY
 # =========================
 
-def refresh_asset_cache():
-    """Builds the mapping of Public IPs to Private IPs on startup."""
+def refresh_asset_cache(app: FastAPI):
     global IP_MAPPING_CACHE
-    try:
-        ec2 = boto3.client('ec2', region_name=AWS_REGION)
-        # Search for your specific instances by Tag Name
-        response = ec2.describe_instances(Filters=[
-            {'Name': 'tag:Name', 'Values': ['HawkGrid-Linux-Victim', 'HawkGrid-Windows-Victim']},
-            {'Name': 'instance-state-name', 'Values': ['running']}
-        ])
-        
-        for res in response['Reservations']:
-            for inst in res['Instances']:
-                pub = inst.get('PublicIpAddress')
-                priv = inst.get('PrivateIpAddress')
-                if pub and priv:
-                    IP_MAPPING_CACHE[pub] = priv
-                    log.info(f"Mapped {pub} (Public) -> {priv} (Private)")
-    except Exception as e:
-        log.error(f"Failed to refresh asset cache: {e}")
+    IP_MAPPING_CACHE = {}
 
-def resolve_asset_id(public_ip: str) -> str:
-    """Translates a changing Public IP to a static Private IP for the Asset Database."""
-    # Check cache first
+    providers = getattr(app.state, "providers", {})
+
+    for name, provider in providers.items():
+        try:
+            assets = provider.discover_assets()
+
+            for asset in assets:
+                pub = asset.get("public_ip")
+                priv = asset.get("private_ip")
+
+                if pub and priv:
+                    IP_MAPPING_CACHE[pub] = {
+                        "private_ip": priv,
+                        "provider": provider
+                    }
+
+                    log.info(f"[{name}] {pub} -> {priv}")
+
+        except Exception as e:
+            log.error(f"Asset discovery failed for {name}: {e}")
+
+
+def resolve_asset(public_ip: str):
     if public_ip in IP_MAPPING_CACHE:
         return IP_MAPPING_CACHE[public_ip]
-    
-    # Fallback: Individual lookup if cache missed
-    try:
-        ec2 = boto3.client('ec2', region_name=AWS_REGION)
-        response = ec2.describe_instances(Filters=[{'Name': 'ip-address', 'Values': [public_ip]}])
-        for res in response['Reservations']:
-            for inst in res['Instances']:
-                priv = inst.get('PrivateIpAddress')
-                IP_MAPPING_CACHE[public_ip] = priv
-                return priv
-    except Exception:
-        pass
-    
-    return public_ip # Return original if not found
+
+    return {
+        "private_ip": public_ip,
+        "provider": None
+    }
 
 # =========================
 # FASTAPI LIFESPAN
 # =========================
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1. Load ML Models
+
+    print("🔥 LIFESPAN STARTED")
+    app.state.providers = get_cloud_providers()
+    app.state.ledger = get_ledger()
+
     try:
-        log.info("Loading ML pipeline: %s", MODEL_PATH)
+        log.info("Loading ML model...")
         data = joblib.load(MODEL_PATH)
-        app.state.scaler = data["scaler"]
-        app.state.label_encoder = data["label_encoder"]
-        app.state.model_iso = data["model_iso"]
-        app.state.model_rf = data["model_rf"]
-        app.state.features = data["features"]
-        log.info("ML models loaded successfully.")
+        app.state.model = data
+        log.info("Model loaded.")
     except Exception as e:
-        log.error(f"ML Load Failed: {e}")
+        log.error(f"ML load failed: {e}")
 
-    # 2. Refresh Cloud Asset Cache
-    refresh_asset_cache()
-    
+    refresh_asset_cache(app)
+
     yield
-    log.info("HawkGrid Core shutting down.")
 
-app = FastAPI(title="HawkGrid Detection Core", version="1.0", lifespan=lifespan)
+    log.info("Shutting down.")
+
+
+app = FastAPI(
+    title="HawkGrid Detection Core",
+    version="2.2",
+    lifespan=lifespan
+)
 
 # =========================
-# DATA MODELS
+# DATA MODEL
 # =========================
+
 class LogFeatures(BaseModel):
     model_config = ConfigDict(extra="allow")
+
     node_id: Optional[str] = "unknown-node"
     dst_ip: str
     src_ip: str
     API_Call_Freq: float = 0.0
     Failed_Auth_Count: float = 0.0
     Network_Egress_MB: float = 0.0
-    cloud_provider: str = "aws"
-    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    cloud_provider: str = "unknown"
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 # =========================
-# CORE DETECTION LOGIC
+# DETECTION ROUTE
 # =========================
 
-def run_detection(payload: LogFeatures):
-    raw_dict = payload.model_dump()
-    
-    # STEP 1: RESOLVE ASSET (Public IP -> Static Private IP)
-    static_node_id = resolve_asset_id(raw_dict['dst_ip'])
-    payload.node_id = static_node_id
-    raw_dict['node_id'] = static_node_id # Sync dictionary
-    
-    # STEP 2: ML DETECTION
-    # Ensure the DataFrame has only the features the ML model expects
-    raw_df = pd.DataFrame([raw_dict])
-    detection = detect_event(raw_df)
-    
-    response_action = {"action": "NONE", "status": "NO_ACTION"}
-
-    # STEP 3: INCIDENT RESPONSE
-    if detection["is_anomaly"]:
-        incident = {
-            "timestamp": payload.timestamp,
-            "node_id": payload.node_id, # Now the static Private IP
-            "src_ip": payload.src_ip,
-            "dst_ip": payload.dst_ip,
-            "cloud_provider": payload.cloud_provider,
-            "anomaly_score": detection["anomaly_score"],
-            "attack_type": detection["attack_type"],
-            "raw_event": raw_dict
-        }
-
-        # This triggers the Boto3/Security Group block in playbook.py
-        response_action = execute_playbook("AUTOMATED_CONTAINMENT", incident)
-        
-        # Cryptographic Ledger logging
-        try:
-            log_incident_to_ledger(incident, response_action["status"])
-        except Exception as e:
-            log.error(f"Ledger Write Failed: {e}")
-
-    # STEP 4: REPORTING
-    report = build_report(raw_dict, detection, response_action)
-    append_report(report)
-    
-    return report
-
-# =========================
-# ROUTES
-# =========================
 @app.post("/api/detect")
 def detect_anomaly(payload: LogFeatures):
     try:
-        return run_detection(payload)
+        ledger = app.state.ledger
+        resolved = resolve_asset(payload.dst_ip)
+        
+        incident_data = payload.model_dump()
+        incident_data["node_id"] = resolved["private_ip"]
+        provider = resolved["provider"]
+
+        df = pd.DataFrame([payload.model_dump()])
+        detection = detect_event(df)
+
+        incident_data["anomaly_score"] = detection.get("anomaly_score", 0.0)
+        incident_data["attack_type"] = detection.get("attack_type", "NORMAL")
+        incident_data["raw_event"] = payload.model_dump()
+        
+        response_action_status = "SIMULATED_SUCCESS"
+
+        if detection.get("is_anomaly") and detection.get("attack_type") != "NORMAL" and provider:
+            response_action = execute_playbook(
+                "AUTOMATED_CONTAINMENT",
+                incident_data,
+                provider
+            )
+            response_action_status = response_action.get("status", "FAILED")
+        else:
+            response_action = {"action": "NONE", "status": "NORMAL_TRAFFIC"}
+            if not detection.get("is_anomaly"):
+                response_action_status = "SIMULATED_SUCCESS" 
+
+        print(f"DEBUG: Attempting to log to ledger for {payload.dst_ip}...") 
+        ledger.log_incident(incident_data, response_action_status)
+        print("DEBUG: Ledger log_incident call finished.")
+
+        report = build_report(payload.model_dump(), detection, response_action)
+        append_report(report)
+
+        return {
+            "detection": detection,
+            "response": response_action
+        }
+
     except Exception as e:
-        log.exception("Detection error")
+        log.exception("Detection failure")
         raise HTTPException(status_code=500, detail=str(e))
 
+# =========================
+# STATUS ROUTE
+# =========================
+
 @app.get("/status")
-def status(request: Request):
-    state = request.app.state
-    ready = all([hasattr(state, "scaler"), hasattr(state, "model_iso")])
+def status():
+    providers = getattr(app.state, "providers", {})
+
     return {
         "service": "HawkGrid Detection Core",
         "online": True,
-        "models_ready": ready,
+        "providers": list(providers.keys()),
         "protected_assets": list(IP_MAPPING_CACHE.keys())
     }
+
+# =========================
+# RUN
+# =========================
 
 if __name__ == "__main__":
     import uvicorn

@@ -2,23 +2,22 @@ version: '3.8'
 
 services:
   orchestrator:
-    build: . 
+    build: .
     container_name: hawkgrid-project-orchestrator
-    ports: 
+    ports:
       - "8000:8000"
-    volumes: 
+    volumes:
       - .:/app
-      - ${USERPROFILE}/.aws:/root/.aws:ro
+      - ${HOME}/.aws:/root/.aws:ro
     depends_on:
       - elasticsearch
-    # Use standard mapping syntax (Key: Value) - NO DASHES here
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       AWS_PROFILE: default
-      AWS_REGION: us-east-1
-      USE_SIMULATION: "true" 
-      USE_LOCAL_LEDGER: "true"
-      LOG_LEVEL: "INFO"
+      AWS_REGION: ${AWS_REGION}
+      HG_LEDGER_TYPE: local
+      LOG_LEVEL: INFO
+    restart: unless-stopped
     working_dir: /app
 
   mqtt:
@@ -31,15 +30,15 @@ services:
     image: elasticsearch:7.17.15
     container_name: hawkgrid-project-elasticsearch
     environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false 
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - esdata:/usr/share/elasticsearch/data 
+      - esdata:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
 
@@ -49,7 +48,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200 
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     ports:
       - "5601:5601"
 
