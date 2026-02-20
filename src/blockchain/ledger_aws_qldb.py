@@ -2,7 +2,6 @@ import os
 import logging
 import time
 from typing import Dict, Any
-
 from pyqldb.driver.qldb_driver import QldbDriver
 from pyqldb.errors import ExecuteError
 from .base_ledger import BaseLedger
@@ -14,7 +13,6 @@ TABLE_NAME = os.getenv("HG_AWS_LEDGER_TABLE", "incidents")
 
 _qldb_driver = None
 
-
 def _get_driver():
     global _qldb_driver
     if _qldb_driver is None:
@@ -22,13 +20,10 @@ def _get_driver():
         _qldb_driver = QldbDriver(ledger_name=LEDGER_NAME)
     return _qldb_driver
 
-
 class AWSQLDBLedger(BaseLedger):
 
     def log_incident(self, incident: Dict[str, Any], response_action: str) -> Dict[str, Any]:
-
         driver = _get_driver()
-
         record = {
             "incident_time": incident.get("timestamp", time.time()),
             "node_id": incident.get("node_id"),
@@ -45,9 +40,7 @@ class AWSQLDBLedger(BaseLedger):
                     f"INSERT INTO {TABLE_NAME} ?",
                     record
                 )
-
             driver.execute_lambda(insert_txn)
-
             log.critical("QLDB immutable record created.")
             return {
                 "status": "success",

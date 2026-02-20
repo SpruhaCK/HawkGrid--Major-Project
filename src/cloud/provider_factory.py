@@ -5,14 +5,12 @@ from src.cloud.base_provider import CloudProvider
 
 log = logging.getLogger("hawkgrid-provider")
 
-
 def _aws_ready():
     return (
         os.getenv("AWS_REGION") and
         os.getenv("AWS_ACCESS_KEY_ID") and
         os.getenv("AWS_SECRET_ACCESS_KEY")
     )
-
 
 def _azure_ready():
     return (
@@ -22,7 +20,6 @@ def _azure_ready():
         os.getenv("AZURE_TENANT_ID")
     )
 
-
 def get_cloud_providers() -> Dict[str, CloudProvider]:
     providers = {}
 
@@ -31,10 +28,7 @@ def get_cloud_providers() -> Dict[str, CloudProvider]:
         try:
             from src.cloud.aws_provider import AWSProvider
             aws = AWSProvider()
-
-            # HEALTH CHECK (real validation)
             aws.discover_assets()
-
             providers["aws"] = aws
             log.info("AWS provider READY")
 
@@ -48,10 +42,7 @@ def get_cloud_providers() -> Dict[str, CloudProvider]:
         try:
             from src.cloud.azure_provider import AzureProvider
             az = AzureProvider()
-
-            # HEALTH CHECK
             az.discover_assets()
-
             providers["azure"] = az
             log.info("Azure provider READY")
 
@@ -63,8 +54,6 @@ def get_cloud_providers() -> Dict[str, CloudProvider]:
     # ================= RESULT =================
     if not providers:
         log.warning("No cloud providers READY. Running standalone mode.")
-
     else:
         log.info(f"Active providers: {list(providers.keys())}")
-
     return providers

@@ -26,8 +26,6 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("hawkgrid-api")
 
 MODEL_PATH = os.getenv("HG_MODEL_PATH", "src/ml/hawkgrid_pipeline.joblib")
-
-# public_ip -> { private_ip, provider }
 IP_MAPPING_CACHE = {}
 
 # =========================
@@ -77,14 +75,9 @@ def resolve_asset(public_ip: str):
 async def lifespan(app: FastAPI):
 
     print("🔥 LIFESPAN STARTED")
-
-    # Load providers SAFELY
     app.state.providers = get_cloud_providers()
-
-    # Init ledger
     app.state.ledger = get_ledger()
 
-    # Load ML
     try:
         log.info("Loading ML model...")
         data = joblib.load(MODEL_PATH)
@@ -93,7 +86,6 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         log.error(f"ML load failed: {e}")
 
-    # Discover assets
     refresh_asset_cache(app)
 
     yield
@@ -133,24 +125,19 @@ def detect_anomaly(payload: LogFeatures):
         ledger = app.state.ledger
         resolved = resolve_asset(payload.dst_ip)
         
-        # Prepare the full incident dictionary for the ledger
-        # This matches the "incident" key in your example
         incident_data = payload.model_dump()
         incident_data["node_id"] = resolved["private_ip"]
         provider = resolved["provider"]
 
-        # ML detection
         df = pd.DataFrame([payload.model_dump()])
         detection = detect_event(df)
-        
-        # Add detection results to the incident data
+
         incident_data["anomaly_score"] = detection.get("anomaly_score", 0.0)
         incident_data["attack_type"] = detection.get("attack_type", "NORMAL")
-        incident_data["raw_event"] = payload.model_dump() # Nested raw event
+        incident_data["raw_event"] = payload.model_dump()
         
-        response_action_status = "SIMULATED_SUCCESS" # Default or based on logic
+        response_action_status = "SIMULATED_SUCCESS"
 
-        # Perform isolation only if anomaly
         if detection.get("is_anomaly") and detection.get("attack_type") != "NORMAL" and provider:
             response_action = execute_playbook(
                 "AUTOMATED_CONTAINMENT",
@@ -161,14 +148,12 @@ def detect_anomaly(payload: LogFeatures):
         else:
             response_action = {"action": "NONE", "status": "NORMAL_TRAFFIC"}
             if not detection.get("is_anomaly"):
-                response_action_status = "SIMULATED_SUCCESS" # Keeping your requested format
+                response_action_status = "SIMULATED_SUCCESS" 
 
-        # ⭐ LOG TO LEDGER (Every time, to keep the hash chain alive)
         print(f"DEBUG: Attempting to log to ledger for {payload.dst_ip}...") 
         ledger.log_incident(incident_data, response_action_status)
         print("DEBUG: Ledger log_incident call finished.")
 
-        # Reporting to reports\forensic_audit.json
         report = build_report(payload.model_dump(), detection, response_action)
         append_report(report)
 

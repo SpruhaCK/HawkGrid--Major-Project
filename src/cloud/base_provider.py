@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-
 class CloudProvider(ABC):
-
     @abstractmethod
     def discover_assets(self) -> List[Dict]:
         """Return list of assets with public/private IP"""

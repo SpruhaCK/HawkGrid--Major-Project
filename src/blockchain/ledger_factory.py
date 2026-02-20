@@ -6,7 +6,6 @@ from src.blockchain.ledger_local import LocalLedger
 
 log = logging.getLogger("hawkgrid-ledger-factory")
 
-
 def get_ledger() -> BaseLedger:
     """
     Dynamically selects ledger backend based on environment variable.
@@ -14,12 +13,10 @@ def get_ledger() -> BaseLedger:
     """
 
     ledger_type = os.getenv("HG_LEDGER_TYPE", "local").lower()
-
     log.info(f"Initializing ledger backend: {ledger_type}")
-
     if ledger_type == "local":
         return LocalLedger()
-
+        
     elif ledger_type == "aws":
         try:
             from .ledger_aws_qldb import AWSQLDBLedger

@@ -14,9 +14,8 @@ WINDOW_SIZE = 2.0
 packet_buffer = []
 last_process_time = time.time()
 
-providers = get_cloud_providers()  # returns dict
+providers = get_cloud_providers()
 
-# Map public_ip -> provider_name
 TARGET_MAP = {}
 
 for name, provider in providers.items():
