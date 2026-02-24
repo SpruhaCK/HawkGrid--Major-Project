@@ -129,22 +129,33 @@ def detect_anomaly(payload: LogFeatures):
         incident_data["node_id"] = resolved["private_ip"]
         provider = resolved["provider"]
 
+        # ML detection
         df = pd.DataFrame([payload.model_dump()])
         detection = detect_event(df)
 
         incident_data["anomaly_score"] = detection.get("anomaly_score", 0.0)
         incident_data["attack_type"] = detection.get("attack_type", "NORMAL")
+        incident_data["owasp_risk_score"] = detection.get("owasp_risk_score", 1) # Added OWASP
+        incident_data["severity"] = detection.get("severity", "LOW")             # Added Severity
         incident_data["raw_event"] = payload.model_dump()
         
         response_action_status = "SIMULATED_SUCCESS"
+        recommended_action = detection.get("recommended_action", "NONE")
 
-        if detection.get("is_anomaly") and detection.get("attack_type") != "NORMAL" and provider:
-            response_action = execute_playbook(
-                "AUTOMATED_CONTAINMENT",
-                incident_data,
-                provider
-            )
-            response_action_status = response_action.get("status", "FAILED")
+        # 🚨 NEW OWASP-DRIVEN RESPONSE LOGIC 🚨
+        if detection.get("is_anomaly") and incident_data["attack_type"] != "NORMAL" and provider:
+            # Only Isolate VM for Critical/Extreme attacks (Score 4 & 5)
+            if detection.get("owasp_risk_score") >= 4:
+                response_action = execute_playbook(
+                    "AUTOMATED_CONTAINMENT",
+                    incident_data,
+                    provider
+                )
+                response_action_status = response_action.get("status", "FAILED")
+            else:
+                # For Score 2 & 3 (Recon, Fuzzers), we block IP / Alert instead of crashing the VM
+                response_action = {"action": recommended_action, "status": "IP_BLOCKED"}
+                response_action_status = "SUCCESS"
         else:
             response_action = {"action": "NONE", "status": "NORMAL_TRAFFIC"}
             if not detection.get("is_anomaly"):

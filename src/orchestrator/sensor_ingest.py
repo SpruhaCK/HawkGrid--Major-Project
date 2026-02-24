@@ -8,7 +8,8 @@ from collections import Counter
 import socket
 from src.cloud.provider_factory import get_cloud_providers
 
-ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL")
+ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://127.0.0.1:8000/api/detect")
+# Reduced window size for faster real-time detection
 WINDOW_SIZE = 2.0
 
 packet_buffer = []
@@ -18,6 +19,7 @@ providers = get_cloud_providers()
 
 TARGET_MAP = {}
 
+# Discover assets across clouds to monitor
 for name, provider in providers.items():
     assets = provider.discover_assets()
     for asset in assets:
@@ -54,25 +56,27 @@ def analyze_window():
     src_ips = [p[IP].src for p in packet_buffer]
     src = Counter(src_ips).most_common(1)[0][0]
 
+    # Enhanced Auth Failure detection: Looks specifically for SYN packets to SSH (22) or RDP (3389)
     auth_fail = sum(
         1 for p in packet_buffer
-        if p.haslayer(TCP) and p[TCP].dport in [22, 3389]
+        if p.haslayer(TCP) and p[TCP].dport in [22, 3389] and p[TCP].flags == "S"
     )
 
     egress_mb = sum(len(p) for p in packet_buffer) / 1048576
 
+    # Cast to float to ensure ML model compatibility
     payload = {
         "dst_ip": dst,
         "src_ip": src,
-        "API_Call_Freq": count / WINDOW_SIZE,
-        "Failed_Auth_Count": auth_fail,
-        "Network_Egress_MB": egress_mb,
+        "API_Call_Freq": float(count / WINDOW_SIZE),
+        "Failed_Auth_Count": float(auth_fail),
+        "Network_Egress_MB": float(egress_mb),
         "cloud_provider": TARGET_MAP.get(dst, "unknown")
     }
 
     try:
         resp = requests.post(ORCHESTRATOR_URL, json=payload, timeout=5)
-        print(f"[+] Sent window for {dst} - Status: {resp.status_code}") # Added status
+        print(f"[+] Sent window for {dst} - Status: {resp.status_code}")
     except Exception as e:
         print(f"[!] API error: {e}")
 
@@ -85,6 +89,7 @@ def packet_callback(pkt):
     if IP in pkt:
         dst_ip = pkt[IP].dst
 
+        # Only buffer packets targeting our registered cloud assets
         if dst_ip in TARGET_MAP:
             packet_buffer.append(pkt)
 
@@ -102,4 +107,5 @@ if __name__ == "__main__":
     else:
         iface = get_active_interface()
         print(f"[*] Sniffing on {iface.name}")
+        # store=0 prevents RAM exhaustion during long sniffing sessions
         sniff(iface=iface, prn=packet_callback, store=0)
