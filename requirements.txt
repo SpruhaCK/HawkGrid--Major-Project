@@ -14,3 +14,6 @@ elasticsearch # For connecting to Elasticsearch later
 azure-identity
 azure-mgmt-network
 boto3 # The AWS SDK for Python
+azure-identity==1.15.0
+azure-mgmt-network==25.0.0
+azure-mgmt-compute==30.0.0
