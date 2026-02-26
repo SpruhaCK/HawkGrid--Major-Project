@@ -9,10 +9,11 @@ import { DownloadReportButton } from "./components/DownloadReportButton";
 import { SystemHealthPanel } from "./components/SystemHealthPanel";
 import { BlockchainForensicLedger } from "./components/BlockchainForensicLedger";
 import { ActiveCountermeasures } from "./components/ActiveCountermeasures";
+import { LiveConsole } from './components/LiveConsole';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0F172A] text-gray-100">
+    <div className="min-h-screen bg-[#0F172A] text-gray-100 pb-32 relative">
       <div className="container mx-auto px-4 py-6 max-w-[1600px]">
         <Header />
         
@@ -24,40 +25,35 @@ export default function App() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* LEFT PANEL */}
             <div className="space-y-6">
-              {/* TOP LEFT: Live Attack Topology */}
               <LiveAttackTopology />
-              
-              {/* MIDDLE LEFT: Orchestrator System Health */}
               <SystemHealthPanel />
-              
-              {/* BOTTOM LEFT: Monitored Cloud Assets */}
               <MonitoredCloudAssets />
-              
-              {/* Active Countermeasures (Below Cloud Assets) */}
               <ActiveCountermeasures />
             </div>
             
             {/* RIGHT PANEL */}
             <div className="space-y-6">
-              {/* TOP: Active Threat Analysis */}
               <ThreatAlertsPanel />
-              
-              {/* BOTTOM: Immutable Forensic Ledger */}
               <BlockchainForensicLedger />
             </div>
           </div>
           
-          {/* Charts Section */}
+          {/* Bottom Visual Sections */}
           <ChartsSection />
-          
-          {/* Full-Width Attack Analysis Table */}
           <AttackAnalysisSection />
-          
-          {/* Centered Download Button */}
-          <div className="flex justify-center">
-            <DownloadReportButton />
-          </div>
         </div>
+      </div>
+
+      {/* --- FIXED INTERFACE ELEMENTS --- */}
+
+      {/* 1. Live Console: Sits above the button bar (bottom-16) */}
+      <div className="fixed bottom-16 left-0 right-0 z-50">
+        <LiveConsole />
+      </div>
+
+      {/* 2. Global Action Bar: Sits at the very bottom (bottom-0) */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] p-3 bg-slate-900/90 backdrop-blur-md border-t border-slate-800 flex justify-center shadow-2xl">
+         <DownloadReportButton />
       </div>
     </div>
   );

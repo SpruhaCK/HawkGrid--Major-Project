@@ -49,6 +49,7 @@ ASSET_DATABASE = {
     #     "nsg_name": "vm-a-nsg"
     # }
 }
+}
 
 # =====================================================
 # CENTRAL PLAYBOOK DISPATCHER

@@ -1,75 +1,105 @@
-from scapy.all import sniff, IP, TCP, conf
+import os
+import time
+import socket
 import requests
 import boto3
-import time
 from collections import Counter
-import socket
+from scapy.all import sniff, IP, TCP, conf
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.compute import ComputeManagementClient
+from dotenv import load_dotenv
 
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8000/api/detect")
+load_dotenv()
 
 # --- CONFIGURATION ---
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+AZURE_SUBSCRIPTION_ID = os.getenv("AZURE_SUBSCRIPTION_ID")
+AZ_RESOURCE_GROUP = "HawkGrid-Azure-RG"
+ORCHESTRATOR_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:8000/api/detect")
+
 WINDOW_SIZE = 2.0
 packet_buffer = []
 last_process_time = time.time()
 TARGET_IPS = []
+CURRENT_CLOUD = "unknown"
 
-# --- 1. DYNAMIC INTERFACE FINDER ---
-def get_active_interface():
-    """
-    Automatically finds the interface currently connected to the internet.
-    """
+# --- 1. DYNAMIC CLOUD DETECTION ---
+def detect_cloud():
+    """Detects if the VM is running in AWS or Azure."""
+    # Check for Azure Metadata
     try:
-        # Create a dummy socket to Google DNS to see which interface OS uses
+        resp = requests.get("http://169.254.169.254/metadata/instance?api-version=2021-02-01", 
+                            headers={"Metadata": "true"}, timeout=1)
+        if resp.status_code == 200: return "azure"
+    except: pass
+
+    # Check for AWS Metadata
+    try:
+        resp = requests.get("http://169.254.169.254/latest/meta-data/", timeout=1)
+        if resp.status_code == 200: return "aws"
+    except: pass
+
+    return "unknown"
+
+# --- 2. TARGET DISCOVERY (AWS + AZURE) ---
+def get_cloud_targets():
+    global CURRENT_CLOUD
+    CURRENT_CLOUD = detect_cloud()
+    print(f"[*] Detected Cloud Environment: {CURRENT_CLOUD.upper()}")
+
+    ips = []
+    
+    # AWS Logic (Original)
+    if CURRENT_CLOUD == "aws":
+        try:
+            ec2 = boto3.client('ec2', region_name=AWS_REGION)
+            response = ec2.describe_instances(Filters=[
+                {'Name': 'tag:Name', 'Values': ["HawkGrid-Linux-Victim", "HawkGrid-Windows-Victim"]},
+                {'Name': 'instance-state-name', 'Values': ['running']}
+            ])
+            ips = [i.get('PublicIpAddress') for r in response['Reservations'] for i in r['Instances'] if i.get('PublicIpAddress')]
+        except Exception as e:
+            print(f"[!] AWS Discovery Error: {e}")
+
+    # Azure Logic (New)
+    elif CURRENT_CLOUD == "azure":
+        try:
+            credential = DefaultAzureCredential()
+            compute_client = ComputeManagementClient(credential, AZURE_SUBSCRIPTION_ID)
+            # Find the Target VM private IP (Defaulting to your Terraform setup)
+            ips = ["10.0.1.5"] 
+        except Exception as e:
+            print(f"[!] Azure Discovery Error: {e}")
+
+    return list(set(ips))
+
+# --- 3. DYNAMIC INTERFACE FINDER ---
+def get_active_interface():
+    try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         local_ip = s.getsockname()[0]
         s.close()
-        
-        # Ask Scapy to find the interface matching that IP
         for iface in conf.ifaces.values():
-            if iface.ip == local_ip:
-                return iface
-                
-        # Fallback: Scapy's default
+            if iface.ip == local_ip: return iface
         return conf.iface
     except Exception as e:
         print(f"[!] Auto-detect failed: {e}. Using default.")
         return conf.iface
 
-# --- 2. AWS DISCOVERY ---
-def get_aws_targets():
-    print("[*] Fetching AWS IPs...")
-    try:
-        ec2 = boto3.client('ec2', region_name=AWS_REGION)
-        response = ec2.describe_instances(Filters=[
-            {'Name': 'tag:Name', 'Values': ["HawkGrid-Linux-Victim", "HawkGrid-Windows-Victim"]},
-            {'Name': 'instance-state-name', 'Values': ['running']}
-        ])
-        ips = [i.get('PublicIpAddress') for r in response['Reservations'] for i in r['Instances'] if i.get('PublicIpAddress')]
-        return ips
-    except Exception as e:
-        print(f"[!] AWS Error: {e}")
-        return []
-
-# --- 3. PROCESSING & SENDING ---
+# --- 4. PROCESSING & SENDING ---
 def analyze_window():
     global packet_buffer
     if not packet_buffer: return
 
-    # Basic Stats
     count = len(packet_buffer)
     dst = packet_buffer[0][IP].dst
     src_ips = [p[IP].src for p in packet_buffer]
     src = Counter(src_ips).most_common(1)[0][0]
     
-    # Speed Optimization (Prevent DoS Crash)
-    auth_fail = 0
-    egress_mb = (count * 60) / 1048576 # Approximation for high speed
-    
-    if count < 500: # Only do deep inspection if traffic is light
-        auth_fail = sum(1 for p in packet_buffer if p.haslayer(TCP) and p[TCP].dport == 22)
-        egress_mb = sum(len(p) for p in packet_buffer) / 1048576
+    # Detection logic for SSH (22) and SMB (445)
+    auth_fail = sum(1 for p in packet_buffer if p.haslayer(TCP) and p[TCP].dport in [22, 445])
+    egress_mb = sum(len(p) for p in packet_buffer) / 1048576
 
     payload = {
         "node_id": dst,
@@ -78,45 +108,35 @@ def analyze_window():
         "API_Call_Freq": count / WINDOW_SIZE,
         "Failed_Auth_Count": auth_fail,
         "Network_Egress_MB": egress_mb,
-        "cloud_provider": "aws"
+        "cloud_provider": CURRENT_CLOUD 
     }
     
     try:
-        # 5 second timeout to handle Orchestrator load
         requests.post(ORCHESTRATOR_URL, json=payload, timeout=5)
-        print(f"[+] Sent {count} packets to API for {dst}")
-    except:
-        pass # Keep running even if API is slow
+        print(f"[+] Alert Sent to Orchestrator ({CURRENT_CLOUD}): {count} packets for {dst}")
+    except: pass
 
-    packet_buffer = [] # Clear buffer
+    packet_buffer = []
 
 def packet_callback(pkt):
     global last_process_time, packet_buffer
-    
     if IP in pkt:
         if pkt[IP].dst in TARGET_IPS:
-            # VISUAL PROOF
-            print(f"[!] TARGET HIT: {pkt[IP].src} -> {pkt[IP].dst}")
+            print(f"[!] TARGET HIT ({CURRENT_CLOUD}): {pkt[IP].src} -> {pkt[IP].dst}")
             packet_buffer.append(pkt)
 
-    # Time Check
     if (time.time() - last_process_time) > WINDOW_SIZE:
         analyze_window()
         last_process_time = time.time()
 
 # --- MAIN START ---
 if __name__ == "__main__":
-    # 1. Get Targets
-    TARGET_IPS = get_aws_targets()
-    print(f"[*] Targets: {TARGET_IPS}")
+    TARGET_IPS = get_cloud_targets()
+    print(f"[*] Monitoring Targets: {TARGET_IPS}")
     
     if not TARGET_IPS:
-        print("[!] No Targets found! Is AWS running?")
+        print("[!] No Targets found! Check your cloud instances.")
     else:
-        # 2. Auto-Detect Interface
         active_iface = get_active_interface()
-        print(f"[*] Auto-detected Interface: {active_iface.name} ({active_iface.ip})")
-        
-        # 3. Start Sniffing
-        print("[*] Sniffer Active. Waiting for Kali...")
+        print(f"[*] Sniffer Active on: {active_iface.name}")
         sniff(iface=active_iface, prn=packet_callback, store=0)
