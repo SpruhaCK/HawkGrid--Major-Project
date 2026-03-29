@@ -233,7 +233,7 @@ export function BlockchainForensicLedger() {
           {loading ? (
              <div className="text-center text-gray-500 py-10">Syncing Ledger...</div>
           ) : (
-            blocks.slice(0, 5).map((block, index) => { 
+            blocks.slice(0, 3).map((block, index) => { 
               const inc = block.incident || {};
               const isTampered = block.integrityStatus === "Tampered";
               const isGenesis = block.integrityStatus === "Genesis";

@@ -192,8 +192,8 @@ def simulate_attacks():
         # 🚨 FOR LATERAL MOVEMENT DEMO (AWS Windows -> AWS Ubuntu)
         # Uncomment the two lines below and add your real public IPs
         # =========================================================
-        payload["dst_ip"] = "52.90.149.125"
-        payload["src_ip"] = "44.214.5.49"
+        payload["dst_ip"] = "54.89.64.11"  #Ubuntu Server in AWS (Target)
+        payload["src_ip"] = "44.200.59.123"  #Windows Server in AWS (Attacker)
 
         print(f"[*] Sending Payload to {payload['dst_ip']}... True Category: {attack_name}")
         

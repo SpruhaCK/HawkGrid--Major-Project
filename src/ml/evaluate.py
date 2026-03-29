@@ -3,7 +3,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import (
+    confusion_matrix, 
+    classification_report, 
+    accuracy_score, 
+    precision_score, 
+    recall_score, 
+    f1_score
+)
 
 # --- CONFIG ---
 MODEL_PATH = "src/ml/hawkgrid_pipeline.joblib"
@@ -39,12 +46,27 @@ def generate_evaluation():
     plt.title('HawkGrid Multi-Cloud Detection: Confusion Matrix')
     plt.ylabel('Actual Label')
     plt.xlabel('Predicted Label')
+    
+    # Ensure logs directory exists before saving
+    os.makedirs('logs', exist_ok=True)
     plt.savefig('logs/confusion_matrix.png') # Saves it for your report!
     print("Confusion Matrix saved to logs/confusion_matrix.png")
 
-    # 5. Print Official Classification Report
+    # 5. Print Official Classification Report (IEEE Format)
     print("\n--- IEEE CLASSIFICATION REPORT ---")
-    print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred, digits=4))
+
+    # 6. Print Standalone Overall Metrics (Weighted for class imbalance)
+    print("\n--- OVERALL SYSTEM PERFORMANCE (WEIGHTED) ---")
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average='weighted')
+    recall = recall_score(y_test, y_pred, average='weighted')
+    f1 = f1_score(y_test, y_pred, average='weighted')
+
+    print(f"Overall Accuracy  : {accuracy * 100:.2f}%")
+    print(f"Overall Precision : {precision * 100:.2f}%")
+    print(f"Overall Recall    : {recall * 100:.2f}%")
+    print(f"Overall F1-Score  : {f1 * 100:.2f}%")
 
 if __name__ == "__main__":
     generate_evaluation()

@@ -216,6 +216,8 @@ import logging
 import joblib
 import pandas as pd
 import requests # 🚨 NEW IMPORT FOR IPIFY
+import time # 🚨 NEW IMPORT FOR MTTR
+import csv
 from typing import Optional
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -239,6 +241,21 @@ log = logging.getLogger("hawkgrid-api")
 
 MODEL_PATH = os.getenv("HG_MODEL_PATH", "src/ml/hawkgrid_pipeline.joblib")
 IP_MAPPING_CACHE = {}
+
+# =========================
+# MTTR LOGGING HELPER
+# =========================
+def log_mttr_to_csv(attack_type: str, attacker_ip: str, mttr_seconds: float):
+    os.makedirs('reports', exist_ok=True)
+    file_path = 'reports/mttr_logs.csv'
+    file_exists = os.path.isfile(file_path)
+    
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(['Attack_Type', 'Attacker_IP', 'MTTR_Seconds']) # Header
+        writer.writerow([attack_type, attacker_ip, round(mttr_seconds, 4)])
+
 
 # =========================
 # ASSET DISCOVERY
@@ -352,6 +369,11 @@ def detect_anomaly(payload: LogFeatures):
         response_action_status = "SIMULATED_SUCCESS"
         recommended_action = detection.get("recommended_action", "NONE")
 
+        # 🚨 MTTR CLOCK LOGIC STARTS HERE 🚨
+        start_time = time.time()
+        mttr_recorded = False
+        mttr_seconds = 0.0
+
         # Response logic based on detection and asset context
         if detection.get("is_anomaly") and incident_data["attack_type"] != "NORMAL" and provider:
             all_connected_clouds = getattr(app.state, "providers", {})
@@ -376,10 +398,21 @@ def detect_anomaly(payload: LogFeatures):
                     all_providers=all_connected_clouds
                 )
             response_action_status = response_action.get("status", "FAILED")
+
+            # 🚨 STOP CLOCK IMMEDIATELY AFTER MITIGATION RETURNS 🚨
+            end_time = time.time()
+            mttr_seconds = end_time - start_time
+            mttr_recorded = True
+
         else:
             response_action = {"action": "NONE", "status": "NORMAL_TRAFFIC"}
             if not detection.get("is_anomaly"):
                 response_action_status = "SIMULATED_SUCCESS"
+
+        # 🚨 LOG THE MTTR IF AN ATTACK WAS MITIGATED 🚨
+        if mttr_recorded:
+            print(f"\n[METRIC] ⚡ MTTR for {incident_data['attack_type']} from {payload.src_ip}: {mttr_seconds:.4f} seconds\n")
+            log_mttr_to_csv(incident_data['attack_type'], payload.src_ip, mttr_seconds)
 
         print(f"DEBUG: Attempting to log to ledger for {payload.dst_ip}...") 
         ledger.log_incident(incident_data, response_action_status)

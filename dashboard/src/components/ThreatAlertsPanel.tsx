@@ -6,14 +6,14 @@ const threatAlerts = [
   {
     id: 1,
     severity: "Critical",
-    type: "Volumetric DDoS Detected",
+    type: "Dos Attack Detected",
     target: "AWS-Production-Web-1",
     source: "192.168.0.100",
     location: "Nigeria",
     time: "16:11:47",
     color: "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30",
     bgColor: "bg-[#EF4444]/10 border-[#EF4444]/30",
-    mlConfidence: 99.8,
+    // mlConfidence: 99.8,
     mlModel: "Random Forest Engine",
     mitigationAction: "WAF Block Rule Initiated on IP 192.168.0.100",
     mitigationStep: 2 // 0=Detected, 1=Analyzing, 2=Mitigating, 3=Resolved
@@ -21,15 +21,15 @@ const threatAlerts = [
   {
     id: 2,
     severity: "High",
-    type: "SQL Injection Pattern",
+    type: "Brute Force Login Attempt",
     target: "Database-Gateway-2",
     source: "185.24.76.11",
     location: "Germany",
     time: "14:32:05",
     color: "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30",
     bgColor: "bg-[#F59E0B]/10 border-[#F59E0B]/30",
-    mlConfidence: 98.4,
-    mlModel: "Neural Network Classifier",
+    // mlConfidence: 98.4,
+    mlModel: "Random Forest Engine",
     mitigationAction: "IP Blacklist Updated",
     mitigationStep: 1
   }
@@ -68,7 +68,7 @@ export function ThreatAlertsPanel() {
                   </Badge>
                   <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
                     <Brain className="h-3 w-3 mr-1" />
-                    ML: {alert.mlConfidence}%
+                    {/* ML: {alert.mlConfidence}% */}
                   </Badge>
                 </div>
                 <div className="flex items-center space-x-1 text-xs text-gray-400">
