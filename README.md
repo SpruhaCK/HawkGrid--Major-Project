@@ -53,5 +53,68 @@ Booting a multi-cloud SOC requires a specific sequence: authenticating the cloud
 1. Click the **Fork** button at the top right of this repository to create your own copy.
 2. Clone your forked repository to your local machine:
    ```bash
-   git clone [https://github.com/YOUR_USERNAME/HawkGrid.git](https://github.com/YOUR_USERNAME/HawkGrid.git)
+   git clone https://github.com/YOUR_USERNAME/HawkGrid.git
    cd HawkGrid
+   ```
+
+### Phase 2: Cloud Infrastructure (Terraform)
+HawkGrid needs target servers to monitor. We use Terraform to automatically build these in AWS.
+1. **Authenticate with AWS:**
+   
+```bash
+   aws configure
+   # Enter your Access Key, Secret Key, and region (e.g., us-east-1)
+   ```
+2. **Provision the AWS Targets:**
+   ```bash
+   cd infra/aws
+   terraform init
+   terraform validate
+   terraform apply
+   # Type 'yes' when prompted to build the infrastructure
+   cd ../..
+   ```
+
+### Phase 3: The Engine (Docker & Python)
+*Why Docker?* We use Docker Compose to instantly spin up our complex supporting dependencies (like isolated network bridges or the Blockchain ledger) without polluting your local machine.
+
+1. **Spin up supporting containers:**
+   
+```bash
+   docker-compose up -d
+   ```
+2. **Setup the Python Environment (In a new terminal):**
+   ```bash
+   python -m venv .venv 
+   .\.venv\Scripts\activate   # Mac/Linux users: source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+3. **Train the ML Model & Start the APIs:**
+   ```bash
+   # Train the Random Forest Engine on baseline data
+   python -m src.ml.train_pipeline
+   
+   # Start the API and Sensor Ingestion (run these in separate terminal windows)
+   python -m src.orchestrator.api
+   python -m src.orchestrator.sensor_ingest
+   node log-bridge.js
+   ```
+
+### Phase 4: The Dashboard
+With the brain running, let's start the visual interface.
+1. **Open a new terminal:**
+   ```bash
+   cd dashboard
+   npm install
+   npm run dev
+   ```
+2. Navigate to `http://localhost:5173` in your browser. You should see the HawkGrid SOC dashboard.
+
+### Phase 5: Fire for Effect (Simulate Attacks)
+Time to test the defenses. HawkGrid includes custom scripts leveraging `scapy` to generate realistic, malicious network packets.
+1. **Launch the advanced attack simulator:**
+   ```bash
+   # In a new terminal (with your virtual environment activated)
+   python simulate_advanced_attacks.py
+   ```
+*Watch your React dashboard instantly visualize the DDoS and Brute Force attacks, classify them via Machine Learning, and autonomously execute the Layer 4 blocks!*
