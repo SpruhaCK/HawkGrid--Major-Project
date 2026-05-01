@@ -41,25 +41,22 @@ def detect_event(raw_df: pd.DataFrame):
     # ---------------------------------------------------------
     # ROUTE 1: LIVE SENSOR (Volumetric Traffic - 3 features)
     # ---------------------------------------------------------
-    # If "f_0" is missing, we know this is from the live Wi-Fi sensor, not the simulator.
     if "f_0" not in raw_df.columns:
         api_freq = float(raw_df.get("API_Call_Freq", [0])[0])
         failed_auth = float(raw_df.get("Failed_Auth_Count", [0])[0])
         egress = float(raw_df.get("Network_Egress_MB", [0])[0])
 
-        # 🚨 UPDATED LOGIC: Highly sensitive to Brute Force
-        if failed_auth >= 1.0: # If even 1 or 2 SSH hits happen in 2 secs, flag it
+        if failed_auth >= 1.0: 
             attack_name = "BRUTE_FORCE" 
         elif api_freq >= 80.0 or egress > 5.0:
             attack_name = "DOS"
-        elif api_freq >= 10.0: # Lowered threshold for Nmap
+        elif api_freq >= 10.0: 
             attack_name = "RECONNAISSANCE"
         else:
             attack_name = "NORMAL"
 
         metrics = get_owasp_metrics(attack_name)
         
-        # Return standard Python types to prevent HTTP 500 JSON errors
         return {
             "is_anomaly": bool(attack_name != "NORMAL"),
             "anomaly_score": 0.99 if attack_name != "NORMAL" else 0.0,
@@ -69,33 +66,26 @@ def detect_event(raw_df: pd.DataFrame):
             "recommended_action": metrics["action"]
         }
 
-# ---------------------------------------------------------
+    # ---------------------------------------------------------
     # ROUTE 2: DEEP PACKET INSPECTION (Simulated ML - 44 features)
     # ---------------------------------------------------------
-    aligned = preprocess_security_logs(raw_df, features)
-    scaled = scaler.transform(aligned)
+    else:
+        aligned = preprocess_security_logs(raw_df, features)
+        scaled = scaler.transform(aligned)
 
-    # 1. Attack Classification (Random Forest)
-    # Let the Random Forest decide the specific attack type FIRST
-    rf_pred_id = rf.predict(scaled)[0]
-    numeric_label = le.inverse_transform([rf_pred_id])[0]
-    attack_name = UNSW_MAPPING.get(float(numeric_label), "NORMAL")
-    
-    # 2. Determine Anomaly Status
-    # If the Random Forest says it's anything other than NORMAL, it IS an anomaly!
-    is_anomaly = bool(attack_name != "NORMAL")
-    
-    # We still calculate the Isolation Forest score just to keep the dashboard numbers looking cool
-    iso_score = float(abs(iso.decision_function(scaled)[0]))
+        rf_pred_id = rf.predict(scaled)[0]
+        numeric_label = le.inverse_transform([rf_pred_id])[0]
+        attack_name = UNSW_MAPPING.get(float(numeric_label), "NORMAL")
+        
+        is_anomaly = bool(attack_name != "NORMAL")
+        iso_score = float(abs(iso.decision_function(scaled)[0]))
+        metrics = get_owasp_metrics(attack_name)
 
-    # 3. Get the OWASP metrics based on the Random Forest's decision
-    metrics = get_owasp_metrics(attack_name)
-
-    return {
-        "is_anomaly": is_anomaly,
-        "anomaly_score": iso_score,
-        "attack_type": attack_name,
-        "owasp_risk_score": metrics["score"],
-        "severity": metrics["severity"],
-        "recommended_action": metrics["action"]
-    }
+        return {
+            "is_anomaly": is_anomaly,
+            "anomaly_score": iso_score,
+            "attack_type": attack_name,
+            "owasp_risk_score": metrics["score"],
+            "severity": metrics["severity"],
+            "recommended_action": metrics["action"]
+        }

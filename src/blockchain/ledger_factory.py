@@ -14,6 +14,7 @@ def get_ledger() -> BaseLedger:
 
     ledger_type = os.getenv("HG_LEDGER_TYPE", "local").lower()
     log.info(f"Initializing ledger backend: {ledger_type}")
+    
     if ledger_type == "local":
         return LocalLedger()
         
@@ -25,6 +26,16 @@ def get_ledger() -> BaseLedger:
             raise RuntimeError(
                 "AWS QLDB selected but pyqldb is not installed. "
                 "Install with: pip install pyqldb"
+            )
+            
+    elif ledger_type == "azure":
+        try:
+            from .ledger_azure import AzureConfidentialLedger
+            return AzureConfidentialLedger()
+        except ImportError:
+            raise RuntimeError(
+                "Azure Ledger selected but required Azure SDKs are missing. "
+                "Install with: pip install azure-identity azure-confidentialledger"
             )
 
     elif ledger_type == "elasticsearch":
