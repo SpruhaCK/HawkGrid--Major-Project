@@ -1,4 +1,4 @@
-# 🦅 HawkGrid: Next-Gen Autonomous SOC
+# 🦅 HawkGrid: A Secure Multi-Cloud Orchestration Layer for Behavioral Anomaly Detection and Tactical Incident Response
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Python FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -13,9 +13,9 @@ Moving beyond traditional, reactive SIEMs, HawkGrid utilizes a **Random Forest M
 
 ---
 
-## ✨ Unfair Advantages (Unique Features)
+## ✨ Features
 
-* 🧠 **Global Hive Mind:** HawkGrid isn't isolated. If a threat is detected on an AWS node, the orchestrator proactively pushes identical block rules to Azure nodes, instantly securing the entire multi-cloud perimeter.
+* 🧠 **Incident Response:** HawkGrid isn't isolated. If a threat is detected on an AWS node, the orchestrator proactively pushes identical block rules to Azure nodes, instantly securing the entire multi-cloud perimeter.
 * 🔗 **Immutable Blockchain Forensics:** Traditional logs can be deleted by intruders. HawkGrid cryptographically chains every detected incident and mitigation action into a tamper-proof blockchain ledger, ensuring absolute audit integrity.
 * ⚡ **Fully Autonomous MTTR:** Zero human intervention required. From initial packet ingestion to ML classification and API-driven cloud firewall mitigation, Mean Time To Respond (MTTR) is reduced from hours to mere seconds.
 * 🗺️ **Real-Time Attack Topology:** A dynamic, React-based dashboard visualizes live network flows, translating raw logs into flowing animations that snap to "Secure" the millisecond a cloud firewall rule propagates.
