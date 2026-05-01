@@ -19,3 +19,8 @@ class CloudProvider(ABC):
     @abstractmethod
     def block_ip(self, attacker_ip: str) -> dict:
         pass
+
+    @abstractmethod
+    def fetch_logs(self) -> List[Dict]:
+        """Fetches recent security or flow logs from the cloud provider."""
+        pass

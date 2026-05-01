@@ -22,34 +22,47 @@ def _azure_ready():
 
 def get_cloud_providers() -> Dict[str, CloudProvider]:
     providers = {}
+    
+    # Check which clouds the user actually wants to monitor
+    requested_clouds = [c.strip() for c in os.getenv("CLOUD_PROVIDER", "aws,azure").lower().split(",")]
+    log.info(f"Checking live status for requested clouds: {requested_clouds}")
 
-    if _aws_ready():
+    # 1. Probe AWS
+    if "aws" in requested_clouds and _aws_ready():
         try:
             from src.cloud.aws_provider import AWSProvider
             aws = AWSProvider()
-            aws.discover_assets()
-            providers[aws.name] = aws
-            log.info("AWS provider READY")
+            assets = aws.discover_assets() # Reach into AWS and count VMs
+            
+            # 🚨 THE CRITICAL CHECK: Only add AWS if servers are actually running
+            if assets: 
+                providers[aws.name] = aws
+                log.info(f"AWS is UP. Discovered {len(assets)} active EC2 instances.")
+            else:
+                log.warning("AWS keys found, but ZERO running instances. AWS defense bypassed.")
         except Exception as e:
-            log.warning(f"AWS provider skipped: {e}")
-    else:
-        log.info("AWS env not configured")
+            log.error(f"AWS probe failed (Check connection or keys): {e}")
 
-    if _azure_ready():
+    # 2. Probe Azure
+    if "azure" in requested_clouds and _azure_ready():
         try:
             from src.cloud.azure_provider import AzureProvider
             az = AzureProvider()
-            az.discover_assets()
-            providers[az.name] = az
-            log.info("Azure provider READY")
+            assets = az.discover_assets() # Reach into Azure and count VMs
+            
+            # 🚨 THE CRITICAL CHECK: Only add Azure if servers are actually running
+            if assets: 
+                providers[az.name] = az
+                log.info(f"Azure is UP. Discovered {len(assets)} active VMs.")
+            else:
+                log.warning("Azure keys found, but ZERO running VMs. Azure defense bypassed.")
         except Exception as e:
-            log.warning(f"Azure provider skipped: {e}")
-    else:
-        log.info("Azure env not configured")
+            log.error(f"Azure probe failed: {e}")
 
+    # 3. Final Verification
     if not providers:
-        log.warning("No cloud providers READY. Running standalone mode.")
+        log.critical("HawkGrid is running blind! No active servers found on any cloud.")
     else:
-        log.info(f"Active providers: {list(providers.keys())}")
+        log.info(f"Mesh Defense Active for: {list(providers.keys())}")
         
     return providers
